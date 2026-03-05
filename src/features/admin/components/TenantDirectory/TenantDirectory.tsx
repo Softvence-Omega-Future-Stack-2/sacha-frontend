@@ -3,7 +3,7 @@ import { Phone, Heart, ChevronDown, Mail, Copy, X, PhoneCall, Check } from "luci
 import { useGetDirectoryQuery } from "../../../../redux/featuresAPI/directory/directoryApi";
 
 export default function TenantDirectory() {
-  const { data: tenantDirectory, isLoading } = useGetDirectoryQuery();
+  const { data: tenantDirectory, isLoading } = useGetDirectoryQuery({});
   console.log(tenantDirectory);
   const [selectedTenant, setSelectedTenant] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -123,8 +123,8 @@ export default function TenantDirectory() {
                         key={tab}
                         onClick={() => setActiveTab(tab as any)}
                         className={`px-4 py-2 text-sm font-medium rounded-full transition ${activeTab === tab
-                            ? "text-white bg-blue-600 hover:bg-blue-700"
-                            : "text-gray-700 hover:bg-gray-100"
+                          ? "text-white bg-blue-600 hover:bg-blue-700"
+                          : "text-gray-700 hover:bg-gray-100"
                           }`}
                       >
                         {tab}

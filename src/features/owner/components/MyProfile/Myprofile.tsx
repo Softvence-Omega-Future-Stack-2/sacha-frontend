@@ -36,8 +36,10 @@ const mockUser = {
   country: countries[0],
   about: "",
   profileImage: "",
-  dossierUrl: "",        // ← Added
+  dossierUrl: "",
   role: "tenant",
+  profession: "",
+  netIncome: "",
 };
 
 const FormInput = ({ label, value, onChange, disabled, ...props }: any) => (

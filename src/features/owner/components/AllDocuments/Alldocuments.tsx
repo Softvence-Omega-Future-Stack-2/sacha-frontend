@@ -1,6 +1,5 @@
 // AllDocuments.tsx
 import React, { useState } from 'react';
-import { useNavigate } from "react-router-dom";
 import {
   Upload,
   CheckCircle,
@@ -39,7 +38,6 @@ interface DocumentCategory {
 }
 
 const AllDocuments: React.FC = () => {
-  const navigate = useNavigate();
 
   // API Hooks
   const { data: proofsData, isLoading: isFetching, refetch } = useGetTenantProofsQuery();

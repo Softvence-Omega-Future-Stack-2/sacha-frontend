@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { MoreVertical, Loader2 } from "lucide-react";
-import { useDeleteOwnerAdMutation, useGetOwnerAdsQuery, useUpdateOwnerAdMutation } from "../../../../redux/featuresAPI/owner/owner.api";
+import { useDeleteOwnerAdMutation, useGetOwnerAdsQuery } from "../../../../redux/featuresAPI/owner/owner.api";
 import EditAdOffcanvas from "./EditAdOffcanvas";
 
 // Images (Fallback)
@@ -26,7 +26,6 @@ interface PropertyListProps {
 export default function PropertyList({ onNewAnnouncement }: PropertyListProps) {
     const { data: propertiesList, isLoading: isListLoading } = useGetOwnerAdsQuery({});
     const [deleteOwnerAd] = useDeleteOwnerAdMutation();
-    const [updateOwnerAd] = useUpdateOwnerAdMutation();
     const [openMenuId, setOpenMenuId] = useState<number | null>(null);
     const [toastMessage, setToastMessage] = useState("");
     const [editingAd, setEditingAd] = useState<any>(null);
@@ -90,18 +89,6 @@ export default function PropertyList({ onNewAnnouncement }: PropertyListProps) {
         }
     };
 
-    const handleStatusUpdate = async (id: number, newStatus: string) => {
-        try {
-            await updateOwnerAd({ id, data: { status: newStatus as any } }).unwrap();
-            setOpenMenuId(null);
-            setToastMessage(`Status updated to ${newStatus}`);
-            setTimeout(() => setToastMessage(""), 3000);
-        } catch (err: any) {
-            const errorMessage = err?.data?.detail || err?.data?.message || "Failed to update status";
-            setToastMessage(errorMessage);
-            setTimeout(() => setToastMessage(""), 3000);
-        }
-    };
 
     const getStatusStyle = (status: string) => {
         switch (status.toLowerCase()) {
@@ -116,22 +103,23 @@ export default function PropertyList({ onNewAnnouncement }: PropertyListProps) {
         }
     };
 
-    const menuItems = (apt: any) => [
-
-        {
-            label: 'Edit',
-            action: () => {
-                setEditingAd(apt);
-                setIsEditOpen(true);
+    const menuItems = (apt: any) => {
+        const items: { label: string; action: () => void; danger?: boolean; primary?: boolean }[] = [
+            {
+                label: 'Edit',
+                action: () => {
+                    setEditingAd(apt);
+                    setIsEditOpen(true);
+                }
+            },
+            {
+                label: 'Delete',
+                danger: true,
+                action: () => handleDelete(apt.id)
             }
-        },
-
-        {
-            label: 'Delete',
-            danger: true,
-            action: () => handleDelete(apt.id)
-        }
-    ];
+        ];
+        return items;
+    };
 
     return (
         <div className="bg-white rounded-2xl border border-[#E5ECF6] p-6 shadow-sm">

@@ -1,0 +1,24 @@
+src/components/Home/HeroSection.tsx(512,35): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/components/Home/HeroSection.tsx(555,35): error TS7006: Parameter 'opt' implicitly has an 'any' type.
+src/components/Home/HeroSection.tsx(609,32): error TS7006: Parameter 'opt' implicitly has an 'any' type.
+src/components/HomeSearchResult/SearchComponents.tsx(240,3): error TS7031: Binding element 'label' implicitly has an 'any' type.
+src/components/HomeSearchResult/SearchComponents.tsx(241,3): error TS7031: Binding element 'value' implicitly has an 'any' type.
+src/components/HomeSearchResult/SearchComponents.tsx(242,3): error TS7031: Binding element 'onChange' implicitly has an 'any' type.
+src/components/HomeSearchResult/SearchComponents.tsx(243,3): error TS7031: Binding element 'options' implicitly has an 'any' type.
+src/components/HomeSearchResult/SearchComponents.tsx(244,3): error TS7031: Binding element 'placeholder' implicitly has an 'any' type.
+src/components/HomeSearchResult/SearchComponents.tsx(245,3): error TS7031: Binding element 'icon' implicitly has an 'any' type.
+src/components/HomeSearchResult/SearchComponents.tsx(294,27): error TS7006: Parameter 'option' implicitly has an 'any' type.
+src/components/HomeSearchResult/SearchComponents.tsx(314,28): error TS7031: Binding element 'onSearch' implicitly has an 'any' type.
+src/features/admin/components/Myadd/PropertyList.tsx(93,11): error TS6133: 'handleStatusUpdate' is declared but its value is never read.
+src/features/admin/components/Myadd/PropertyList.tsx(233,162): error TS2339: Property 'primary' does not exist on type '{ label: string; action: () => void; danger?: undefined; } | { label: string; danger: boolean; action: () => Promise<void>; }'.
+  Property 'primary' does not exist on type '{ label: string; action: () => void; danger?: undefined; }'.
+src/features/admin/components/TenantDirectory/TenantDirectory.tsx(6,48): error TS2554: Expected 1-2 arguments, but got 0.
+src/features/owner/components/AllDocuments/Alldocuments.tsx(42,9): error TS6133: 'navigate' is declared but its value is never read.
+src/features/owner/components/Favorites/PossessionsManager.tsx(73,14): error TS2741: Property 'id' is missing in type '{ key: number; price: string; title: string; location: string; image: string; onRemove: () => void; }' but required in type 'PropertyCardProps'.
+src/features/owner/components/MyProfile/Myprofile.tsx(109,9): error TS2353: Object literal may only specify known properties, and 'profession' does not exist in type 'SetStateAction<{ firstName: string; lastName: string; email: string; phone: string; country: { code: string; flag: string; name: string; }; about: string; profileImage: string; dossierUrl: string; role: string; }>'.
+src/features/owner/components/MyProfile/Myprofile.tsx(140,49): error TS2339: Property 'profession' does not exist on type '{ firstName: string; lastName: string; email: string; phone: string; country: { code: string; flag: string; name: string; }; about: string; profileImage: string; dossierUrl: string; role: string; }'.
+src/features/owner/components/MyProfile/Myprofile.tsx(141,48): error TS2339: Property 'netIncome' does not exist on type '{ firstName: string; lastName: string; email: string; phone: string; country: { code: string; flag: string; name: string; }; about: string; profileImage: string; dossierUrl: string; role: string; }'.
+src/features/owner/components/MyProfile/Myprofile.tsx(360,48): error TS2339: Property 'profession' does not exist on type '{ firstName: string; lastName: string; email: string; phone: string; country: { code: string; flag: string; name: string; }; about: string; profileImage: string; dossierUrl: string; role: string; }'.
+src/features/owner/components/MyProfile/Myprofile.tsx(363,27): error TS2339: Property 'profession' does not exist on type '{ firstName: string; lastName: string; email: string; phone: string; country: { code: string; flag: string; name: string; }; about: string; profileImage: string; dossierUrl: string; role: string; }'.
+src/features/owner/components/MyProfile/Myprofile.tsx(396,27): error TS2339: Property 'netIncome' does not exist on type '{ firstName: string; lastName: string; email: string; phone: string; country: { code: string; flag: string; name: string; }; about: string; profileImage: string; dossierUrl: string; role: string; }'.
+src/pages/HomeSearchResult/Result.tsx(227,53): error TS7006: Parameter 'apartment' implicitly has an 'any' type.

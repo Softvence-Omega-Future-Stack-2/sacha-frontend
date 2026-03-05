@@ -224,7 +224,7 @@ const App = () => {
           <p className="text-center py-10 text-xl">Loading...</p>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 relative -top-15 lg:grid-cols-3">
-            {apartments.slice(0, visibleCount).map((apartment) => (
+            {apartments.slice(0, visibleCount).map((apartment: any) => (
               <ApartmentCard key={apartment.id} apartment={apartment} />
             ))}
           </div>

@@ -202,6 +202,7 @@
 // export default ApartmentSearch;
 
 import { useState } from "react";
+import type { FC, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 
 // --- Icon Components ---
@@ -236,7 +237,18 @@ const ChevronDownIcon = () => (
 );
 
 // --- Custom Select ---
-const CustomSelect = ({
+// --- Custom Select Types ---
+interface CustomSelectProps {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: string[];
+  placeholder: string;
+  icon?: ReactNode;
+  isLocation?: boolean;
+}
+
+const CustomSelect: FC<CustomSelectProps> = ({
   label,
   value,
   onChange,
@@ -263,18 +275,16 @@ const CustomSelect = ({
             {icon && <span className="mr-2 flex-shrink-0">{icon}</span>}
 
             <span
-              className={`flex-1 text-gray-800 font-semibold truncate ${
-                !value ? "text-gray-400 font-normal" : ""
-              }`}
+              className={`flex-1 text-gray-800 font-semibold truncate ${!value ? "text-gray-400 font-normal" : ""
+                }`}
             >
               {value || placeholder}
             </span>
 
             {!isLocation && (
               <span
-                className={`absolute right-0 top-1/2 transform -translate-y-1/2 transition-transform duration-200 pointer-events-none ${
-                  isOpen ? "rotate-180" : ""
-                }`}
+                className={`absolute right-0 top-1/2 transform -translate-y-1/2 transition-transform duration-200 pointer-events-none ${isOpen ? "rotate-180" : ""
+                  }`}
               >
                 <ChevronDownIcon />
               </span>
@@ -291,7 +301,7 @@ const CustomSelect = ({
             onClick={() => setIsOpen(false)}
           />
           <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-            {options.map((option) => (
+            {options.map((option: string) => (
               <div
                 key={option}
                 onClick={() => {
@@ -310,13 +320,17 @@ const CustomSelect = ({
   );
 };
 
-// --- MAIN Search Component ---
-const ApartmentSearch = ({ onSearch }) => {
+// --- MAIN Search Component Types ---
+interface ApartmentSearchProps {
+  onSearch?: () => void;
+}
+
+const ApartmentSearch: FC<ApartmentSearchProps> = ({ onSearch }) => {
   const navigate = useNavigate();
 
-  const [propertyType, setPropertyType] = useState("");
-  const [location, setLocation] = useState("Dhanmondi, Dhaka");
-  const [priceRange, setPriceRange] = useState("€10,000 - €200,000");
+  const [propertyType, setPropertyType] = useState<string>("");
+  const [location, setLocation] = useState<string>("Dhanmondi, Dhaka");
+  const [priceRange, setPriceRange] = useState<string>("€10,000 - €200,000");
 
   // 🔥 Modify Button → Navigate with Query Params
   const handleModifySearch = () => {

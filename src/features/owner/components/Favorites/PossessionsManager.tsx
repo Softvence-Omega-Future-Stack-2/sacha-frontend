@@ -12,20 +12,20 @@ import img6 from '../../../../assets/dashboard/h6.jpg'
 
 // Dummy data array
 const properties = [
-  { price: "585", title: "Appartement moderne T3 – Marais", location: "Malibu, California", image: img1 },
-  { price: "585", title: "Appartement moderne T8 – Marais", location: "Malibu, California", image: img2 },
-  { price: "855", title: "Appartement moderne T3 - Marais", location: "Harbor City, Sydney", image: img3 },
-  { price: "589", title: "Appartement moderne T2 – Marais", location: "Malibu, California", image: img4 },
-  { price: "581", title: "Appartement moderne T13 – Marais", location: "Malibu, California", image: img5 },
-  { price: "580", title: "Appartement moderne T11 – Marais", location: "Manhattan, NYC", image: img6 },
-  { price: "585", title: "Appartement moderne T10 – Marais", location: "Times Square, NYC", image: img1 },
-  { price: "585", title: "Appartement moderne T17 – Marais", location: "Downtown, Sydney", image: img2 },
-  { price: "585", title: "Appartement moderne T18 – Marais", location: "Malibu, California", image: img2 },
-  { price: "585", title: "Appartement moderne T9 – Marais", location: "Malibu, California", image: img4 },
-  { price: "585", title: "Appartement moderne T5 – Marais", location: "Malibu, California", image: img5 },
-  { price: "585", title: "Appartement moderne T15 – Marais", location: "Malibu, California", image: img6 },
-  { price: "585", title: "Appartement moderne T17 – Marais", location: "Malibu, California", image: img1 },
-  { price: "585", title: "Appartement moderne T14 – Marais", location: "Malibu, California", image: img2 },
+  { id: "1", price: "585", title: "Appartement moderne T3 – Marais", location: "Malibu, California", image: img1 },
+  { id: "2", price: "585", title: "Appartement moderne T8 – Marais", location: "Malibu, California", image: img2 },
+  { id: "3", price: "855", title: "Appartement moderne T3 - Marais", location: "Harbor City, Sydney", image: img3 },
+  { id: "4", price: "589", title: "Appartement moderne T2 – Marais", location: "Malibu, California", image: img4 },
+  { id: "5", price: "581", title: "Appartement moderne T13 – Marais", location: "Malibu, California", image: img5 },
+  { id: "6", price: "580", title: "Appartement moderne T11 – Marais", location: "Manhattan, NYC", image: img6 },
+  { id: "7", price: "585", title: "Appartement moderne T10 – Marais", location: "Times Square, NYC", image: img1 },
+  { id: "8", price: "585", title: "Appartement moderne T17 – Marais", location: "Downtown, Sydney", image: img2 },
+  { id: "9", price: "585", title: "Appartement moderne T18 – Marais", location: "Malibu, California", image: img2 },
+  { id: "10", price: "585", title: "Appartement moderne T9 – Marais", location: "Malibu, California", image: img4 },
+  { id: "11", price: "585", title: "Appartement moderne T5 – Marais", location: "Malibu, California", image: img5 },
+  { id: "12", price: "585", title: "Appartement moderne T15 – Marais", location: "Malibu, California", image: img6 },
+  { id: "13", price: "585", title: "Appartement moderne T17 – Marais", location: "Malibu, California", image: img1 },
+  { id: "14", price: "585", title: "Appartement moderne T14 – Marais", location: "Malibu, California", image: img2 },
 ]
 
 const ITEMS_PER_PAGE = 8
@@ -33,20 +33,20 @@ const ITEMS_PER_PAGE = 8
 const PossessionsManager: React.FC = () => {
   // Track how many items are currently visible
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE)
-  
+
   // New state to control the loading spinner
   const [loading, setLoading] = useState(false)
 
   // Slice the array to show only visible items
   const visibleProperties = properties.slice(0, visibleCount)
-  
+
   // Check if there are more items to load
   const hasMore = visibleCount < properties.length
 
   // Load next batch of items
   const handleViewMore = () => {
     setLoading(true)                    // Show loader
-    
+
     // Small delay so the loader is visible even if data loads instantly
     setTimeout(() => {
       setVisibleCount(prev => Math.min(prev + ITEMS_PER_PAGE, properties.length))
@@ -64,7 +64,7 @@ const PossessionsManager: React.FC = () => {
             title="My Possessions"
             paragraph="Manage your assets and applications in the blink of an eye"
           />
-       
+
         </header>
 
         {/* Cards Grid - shows already loaded + newly loaded cards */}
@@ -77,12 +77,12 @@ const PossessionsManager: React.FC = () => {
               location={property.location}
               image={property.image} onRemove={function (): void {
                 throw new Error("Function not implemented.")
-              } }            />
+              }} id={property.id} />
           ))}
         </div>
 
         {/* View More Button / Loader */}
-           
+
         {hasMore && (
           <div className="flex justify-center pb-12">
             {loading ? (
