@@ -69,7 +69,7 @@ const PossessionsManager: React.FC = () => {
 
         {/* Cards Grid - shows already loaded + newly loaded cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 ">
-          {visibleProperties.map((property, index) => (
+          {visibleProperties.map((property: { id: string; price: string; title: string; location: string; image: string }, index: number) => (
             <Card
               key={index}
               price={property.price}

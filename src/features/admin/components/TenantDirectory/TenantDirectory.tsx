@@ -3,7 +3,7 @@ import { Phone, Heart, ChevronDown, Mail, Copy, X, PhoneCall, Check } from "luci
 import { useGetDirectoryQuery } from "../../../../redux/featuresAPI/directory/directoryApi";
 
 export default function TenantDirectory() {
-  const { data: tenantDirectory, isLoading } = useGetDirectoryQuery({});
+  const { data: tenantDirectory, isLoading } = useGetDirectoryQuery(undefined);
   console.log(tenantDirectory);
   const [selectedTenant, setSelectedTenant] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);

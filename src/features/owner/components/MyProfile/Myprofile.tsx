@@ -27,8 +27,22 @@ const professions = [
   "Looking for opportunities",
 ];
 
+interface UserProfile {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  country: { code: string; flag: string; name: string };
+  about: string;
+  profileImage: string;
+  dossierUrl: string;
+  role: string;
+  profession: string;
+  netIncome: string;
+}
+
 // Fixed: Added dossierUrl
-const mockUser = {
+const mockUser: UserProfile = {
   firstName: "",
   lastName: "",
   email: "",
@@ -42,7 +56,11 @@ const mockUser = {
   netIncome: "",
 };
 
-const FormInput = ({ label, value, onChange, disabled, ...props }: any) => (
+interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label: string;
+}
+
+const FormInput = ({ label, value, onChange, disabled, ...props }: FormInputProps) => (
   <div className="flex flex-col space-y-2">
     <label className="text-sm font-medium text-gray-800">{label}</label>
     <input
@@ -56,13 +74,17 @@ const FormInput = ({ label, value, onChange, disabled, ...props }: any) => (
   </div>
 );
 
+interface FormTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+  label: string;
+}
+
 const FormTextarea = ({
   label,
   value,
   onChange,
   disabled,
   placeholder,
-}: any) => (
+}: FormTextareaProps) => (
   <div className="flex flex-col space-y-2 col-span-1 md:col-span-2">
     <label className="text-sm font-medium text-gray-800">{label}</label>
     <textarea

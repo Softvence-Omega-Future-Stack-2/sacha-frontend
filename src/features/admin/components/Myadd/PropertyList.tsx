@@ -9,7 +9,7 @@ import featured4 from "../../../../assets/featured4.png";
 interface Apartment {
     status: string;
     id: number;
-    image: any;
+    image: string | string[];
     price: number;
     title: string;
     location: string;
@@ -28,7 +28,7 @@ export default function PropertyList({ onNewAnnouncement }: PropertyListProps) {
     const [deleteOwnerAd] = useDeleteOwnerAdMutation();
     const [openMenuId, setOpenMenuId] = useState<number | null>(null);
     const [toastMessage, setToastMessage] = useState("");
-    const [editingAd, setEditingAd] = useState<any>(null);
+    const [editingAd, setEditingAd] = useState<Apartment | null>(null);
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [menuPosition, setMenuPosition] = useState<{ top: number; left: number } | null>(null);
 
@@ -42,14 +42,14 @@ export default function PropertyList({ onNewAnnouncement }: PropertyListProps) {
         return `${cleanBase}${cleanPath}`;
     };
 
-    const displayedApartments: Apartment[] = (propertiesList?.results || propertiesList || []).map((apt: any) => {
+    const displayedApartments: Apartment[] = (propertiesList?.results || propertiesList || []).map((apt: Record<string, any>) => {
         const rawImages = apt.images || apt.photos || [];
         let processedImages: string[] = [];
 
         if (Array.isArray(rawImages) && rawImages.length > 0) {
-            processedImages = rawImages.map((img: any) => {
-                if (img && img.image) return getImageUrl(img.image);
-                if (img && img.file) return getImageUrl(img.file);
+            processedImages = rawImages.map((img: Record<string, any> | string) => {
+                if (img && typeof img === 'object' && img.image) return getImageUrl(img.image);
+                if (img && typeof img === 'object' && img.file) return getImageUrl(img.file);
                 if (typeof img === 'string') return getImageUrl(img);
                 return featured4;
             });
@@ -103,7 +103,7 @@ export default function PropertyList({ onNewAnnouncement }: PropertyListProps) {
         }
     };
 
-    const menuItems = (apt: any) => {
+    const menuItems = (apt: Apartment) => {
         const items: { label: string; action: () => void; danger?: boolean; primary?: boolean }[] = [
             {
                 label: 'Edit',

@@ -1,5 +1,3 @@
-'use client';
-
 import { Download } from 'lucide-react';
 
 interface DocumentItem {
@@ -21,10 +19,10 @@ const documents: DocumentItem[] = [
 
 export default function BeautifulModelsPage() {
   const handleDownload = (fileName: string) => {
-    
+
     const link = document.createElement('a');
     link.href = `/documents/${fileName}`;
-    link.download = fileName; 
+    link.download = fileName;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

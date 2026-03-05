@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useEffect } from 'react';
 import { MoreVertical, Filter, X, Trash2, CheckCircle, Loader2 } from 'lucide-react';
 import { useGetPropertiesQuery, useDeletePropertyMutation, useUpdatePropertyMutation } from '../../../../redux/featuresAPI/properties/property.api';
@@ -122,9 +120,9 @@ export default function MyProperties() {
             try {
                 await deleteProperty(id).unwrap();
                 showToast(`Property deleted successfully!`, 'success');
-       
+
             } catch (error) {
-                 showToast("Failed to delete property", "error");
+                showToast("Failed to delete property", "error");
             }
         }
         setSelectedProperty(null);
@@ -166,7 +164,7 @@ export default function MyProperties() {
                     // This mapping is inverted from what we read.
                 }
             }).unwrap();
-            
+
             showToast(`Property "${editForm.name}" updated successfully!`, 'success');
             setEditModalOpen(false);
         } catch (error) {
@@ -214,8 +212,8 @@ export default function MyProperties() {
                                         key={status}
                                         onClick={() => setFilterStatus(status)}
                                         className={`px-4 py-2 rounded-full text-sm font-medium transition ${filterStatus === status
-                                                ? 'bg-blue-600 text-white'
-                                                : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                                            ? 'bg-blue-600 text-white'
+                                            : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
                                             }`}
                                     >
                                         {status === 'All' ? 'All Properties' : status}
@@ -253,8 +251,8 @@ export default function MyProperties() {
                             >
                                 {/* Property Info (col-span-full on mobile, then adjusts) */}
                                 <div className="col-span-full  lg:col-span-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                                 
-                                  <img src={property.image} alt={property.name} className='w-20 h-20 rounded-lg object-fill' />
+
+                                    <img src={property.image} alt={property.name} className='w-20 h-20 rounded-lg object-fill' />
                                     <div className='flex-grow'>
                                         <h3 className="text-lg font-semibold text-gray-900">{property.name}</h3>
                                         <p className="text-sm text-gray-500">{property.address}</p>
@@ -264,7 +262,7 @@ export default function MyProperties() {
 
                                 {/* Date, Views, Status - Flex layout on small screen, grid on large */}
                                 <div className="flex flex-col gap-2 col-span-full lg:col-span-7 lg:grid lg:grid-cols-7 lg:gap-4">
-                                    
+
                                     {/* Date */}
                                     <div className="flex justify-between items-center lg:col-span-2 lg:text-center text-sm text-gray-900 lg:block">
                                         <span className='font-medium text-gray-500 lg:hidden'>Date:</span>
