@@ -1,0 +1,12 @@
+@font-face {
+  font-family: "Larken DEMO";
+  font-style: normal;
+  font-weight: 400;
+  src: url("https://db.onlinewebfonts.com/t/30f647fcbdc216b653ddb8e2b7c302d3.woff2") format("woff2"),
+       url("https://db.onlinewebfonts.com/t/30f647fcbdc216b653ddb8e2b7c302d3.woff") format("woff");
+}
+
+/* Use !important so Tailwind doesn't override it */
+.font-larken {
+  font-family: "Larken DEMO", sans-serif !important;
+}

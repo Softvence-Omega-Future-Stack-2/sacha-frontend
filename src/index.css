@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+.larken-font {
+  font-family: "Larken DEMO", sans-serif !important;
+}
+
+.font-dm-sans {
+  font-family: 'DM Sans', sans-serif !important;
+}
+
+
+@layer base {
+  button {
+    cursor: pointer;
+  }
+}

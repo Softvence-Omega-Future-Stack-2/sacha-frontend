@@ -1,0 +1,21 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Arvo:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Orbitron:wght@400..900&family=Russo+One&family=Unbounded:wght@200..900&display=swap');
+body {
+  font-family: 'Larken DEMO Bold', sans-serif;
+} */
+
+/* @import url(https://db.onlinewebfonts.com/c/4702aa5bc020adc8a136db5af0d975e5?family=Larken+DEMO+Bold); */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+body {
+  font-family: 'DM Sans', sans-serif;
+  
+}
+
+.font-dm-sans {
+  font-family: 'DM Sans', sans-serif;
+}
+
+.font-dm-sans-italic {
+  font-family: 'DM Sans', sans-serif;
+  font-style: italic;
+  font-weight: 300; /* or 400 if you want regular italic */
+}
