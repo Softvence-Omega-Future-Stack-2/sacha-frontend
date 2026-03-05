@@ -20,7 +20,7 @@ import ProtectedRoute from "../components/ProtectedRoute";
 // Admin Dashboard Components
 import ApplicationsList from "../features/admin/components/Applications/ApplicationsList";
 import OverviewDashboard from "../features/admin/components/OverviewDashboard/OverviewDashboar";
-import Myprofile from "../features/admin/components/MyProfile/Myprofile";
+
 import TenantDirectory from "../features/admin/components/TenantDirectory/TenantDirectory";
 import Myadd from "../features/admin/components/Myadd/Myadd";
 import MessagesInbox from "../features/admin/components/Messages/MessagesInbox";
