@@ -33,21 +33,8 @@ const Home = () => {
       : "tenant";
   return (
     <>
-      {!(isLoggedIn && userRole === "owner") && (
-        <>
-          <div
-            className="pb-10 lg:px-8 px-4"
-            style={{
-              background:
-                "linear-gradient(180deg, rgba(37, 99, 235, 0) 0%, rgba(37, 99, 235, 0.5) 50%, rgba(37, 99, 235, 0) 100%)",
-            }}
-          >
-            <HeroSection />
-            <StatsSection />
-          </div>
-        </>
-      )}
-      {/* <div
+
+      <div
         className="pb-10 lg:px-8 px-4"
         style={{
           background:
@@ -56,7 +43,9 @@ const Home = () => {
       >
         <HeroSection />
         <StatsSection />
-      </div> */}
+      </div>
+
+
 
       <FeaturedApartments />
       <FranceApartments />

@@ -39,7 +39,7 @@ const resources = {
       "stats.guaranteed_response": "Guaranteed Response",
 
       // Featured Section
-      "featured.title_prefix": "Featured",
+      "featured.title_prefix": "Latest",
       "featured.title_suffix": "Apartments",
       "featured.subtitle": "Discover our selection of available apartments",
       "featured.view_all": "VIEW ALL",
@@ -55,7 +55,7 @@ const resources = {
       "why_us.badge_protect": "SECURE AND PEACEFUL RENTAL",
       "why_us.protect_title_prefix": "What protects you with",
       "why_us.protect_title_suffix": "Hello Appart",
-      
+
       // Why Us List Items
       "why_us.simplify_1": "100% no agency fees",
       "why_us.simplify_2": "Quick online application",
@@ -167,7 +167,7 @@ const resources = {
       "why_us.protect_title_prefix": "Ce qui vous protège avec",
       "why_us.protect_title_suffix": "Hello Appart",
 
-       // Why Us List Items
+      // Why Us List Items
       "why_us.simplify_1": "100% sans frais d'agence",
       "why_us.simplify_2": "Candidature en ligne rapide",
       "why_us.simplify_3": "Suivez vos candidatures en temps réel",

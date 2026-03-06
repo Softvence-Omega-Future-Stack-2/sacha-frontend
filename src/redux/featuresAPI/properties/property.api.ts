@@ -42,6 +42,13 @@ export const propertyAPI = baseAPI.injectEndpoints({
       }),
       providesTags: ["Properties"],
     }),
+    getPublicAds: build.query({
+      query: () => ({
+        url: "/owner/public/ads/",
+        method: "GET",
+      }),
+      providesTags: ["Properties"],
+    }),
   }),
 });
 
@@ -51,4 +58,5 @@ export const {
   useDeletePropertyMutation,
   useUpdatePropertyMutation,
   useSearchPropertiesQuery,
+  useGetPublicAdsQuery,
 } = propertyAPI;

@@ -16,6 +16,8 @@ import FAQ from "../pages/FAQ/FAQ";
 import Contact from "../pages/Contact/Contact";
 import Payment from "../pages/Payment/Payment";
 import ProtectedRoute from "../components/ProtectedRoute";
+import NotFound from "../pages/NotFound/NotFound";
+import Unauthorized from "../pages/Unauthorized/Unauthorized";
 
 // Admin Dashboard Components
 import ApplicationsList from "../features/admin/components/Applications/ApplicationsList";
@@ -54,7 +56,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/rental",
-        element: <Rental />,
+        element: (
+          <ProtectedRoute allowedRoles={["owner"]}>
+            <Rental />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/apartments/product-details/:id",
@@ -80,7 +86,15 @@ const router = createBrowserRouter([
         path: "/search-result",
         element: <HomeSearchResult />,
       },
+      {
+        path: "*",
+        element: <NotFound />,
+      },
     ],
+  },
+  {
+    path: "/unauthorized",
+    element: <Unauthorized />,
   },
   {
     path: "/create-account",
