@@ -76,11 +76,11 @@ const TenantSidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const navItems = [
-    { id: 1, text: "Overview", icon: FileText, path: "/dashboard-tenant" },
-    { id: 2, text: "My Files", icon: FileText, path: "/dashboard-tenant/files" },
-    { id: 3, text: "My Possessions", icon: Package, path: "/dashboard-tenant/possessions" },
+    // { id: 1, text: "Overview", icon: FileText, path: "/dashboard-tenant" },
+    { id: 1, text: "My Files", icon: FileText, path: "/dashboard-tenant" },
+    { id: 2, text: "My Possessions", icon: Package, path: "/dashboard-tenant/possessions" },
     { id: 4, text: "My Search", icon: Search, path: "/dashboard-tenant/search" },
-    { id: 5, text: "Application", icon: Search, path: "/dashboard-tenant/applications" },
+    // { id: 5, text: "Application", icon: Search, path: "/dashboard-tenant/applications" },
     { id: 6, text: "Favorites", icon: Heart, path: "/dashboard-tenant/favorites" },
     { id: 7, text: "Messages", icon: MessageSquare, path: "/dashboard-tenant/messages" },
     { id: 8, text: "All Documents", icon: File, path: "/dashboard-tenant/documents" },

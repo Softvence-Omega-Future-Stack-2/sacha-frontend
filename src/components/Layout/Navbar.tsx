@@ -126,7 +126,7 @@ const Navbar: React.FC = () => {
                 </Link>
               </>
               {/* )} */}
-              {/* {!(isLoggedIn && userRole === "tenant") && ( */}
+              {(userRole === "owner") && (
                 <Link
                   to="/rental"
                   className={`text-[#061251] hover:text-gray-900 text-base font-medium transition-colors pb-1 border-b-2 ${isActiveLink("/rental")
@@ -136,7 +136,7 @@ const Navbar: React.FC = () => {
                 >
                   {t("nav.rental_management")}
                 </Link>
-              {/* )} */}
+              )}
               <Link
                 to="/premium"
                 className={`text-[#061251] hover:text-gray-900 text-base font-medium transition-colors pb-1 border-b-2 ${isActiveLink("/premium")

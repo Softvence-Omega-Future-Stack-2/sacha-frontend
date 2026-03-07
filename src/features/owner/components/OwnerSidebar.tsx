@@ -74,16 +74,17 @@ const OwnerSidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const navItems = [
-    { id: 1, text: "My Ads", icon: LayoutGrid, path: "/dashboard-owner" },
-    { id: 2, text: "Beautiful Models", icon: FileText, path: "/dashboard-owner/beautiful-models" },
-    { id: 3, text: "Tenant Directory", icon: Users, path: "/dashboard-owner/tenants-directory" },
-    { id: 4, text: "Messages", icon: MessageSquare, path: "/dashboard-owner/messages" },
-    { id: 5, text: "Profile", icon: User, path: "/dashboard-owner/profile" },
+    { id: 1, text: "Overview", icon: LayoutGrid, path: "/dashboard-owner" },
+    { id: 2, text: "My Ads", icon: LayoutGrid, path: "/dashboard-owner/my-ads" },
+    { id: 3, text: "Beautiful Models", icon: FileText, path: "/dashboard-owner/beautiful-models" },
+    { id: 4, text: "Tenant Directory", icon: Users, path: "/dashboard-owner/tenants-directory" },
+    { id: 5, text: "Messages", icon: MessageSquare, path: "/dashboard-owner/messages" },
+    { id: 6, text: "Profile", icon: User, path: "/dashboard-owner/profile" },
   ];
 
   const bottomItems = [
-    { id: 6, text: "Go to website", icon: WebhookIcon, path: "/" },
-    { id: 7, text: "Logout", icon: LogOut, path: "" },
+    { id: 7, text: "Go to website", icon: WebhookIcon, path: "/" },
+    { id: 8, text: "Logout", icon: LogOut, path: "" },
   ];
 
   const handleTabClick = (path: string, text: string) => {

@@ -23,7 +23,7 @@ import NotFound from "../pages/NotFound/NotFound";
 import Unauthorized from "../pages/Unauthorized/Unauthorized";
 
 // Admin Dashboard Components
-import ApplicationsList from "../features/admin/components/Applications/ApplicationsList";
+// import ApplicationsList from "../features/admin/components/Applications/ApplicationsList";
 import OverviewDashboard from "../features/admin/components/OverviewDashboard/OverviewDashboar";
 
 import TenantDirectory from "../features/admin/components/TenantDirectory/TenantDirectory";
@@ -151,10 +151,10 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Myadd />,
+        element: <OverviewDashboard />,
       },
       {
-        path: "create-ad",
+        path: "my-ads",
         element: <Myadd />,
       },
       {
@@ -185,22 +185,22 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
+      // {
+      //   index: true,
+      //   element: <OverviewDashboard />,
+      // },
       {
         index: true,
-        element: <OverviewDashboard />,
-      },
-      {
-        path: "files",
         element: <MyFiles />,
       },
       {
         path: "possessions",
         element: <PossessionsManager />,
       },
-      {
-        path: "applications",
-        element: <ApplicationsList />,
-      },
+      // {
+      //   path: "applications",
+      //   element: <ApplicationsList />,
+      // },
       {
         path: "search",
         element: <SearchHistory />,
