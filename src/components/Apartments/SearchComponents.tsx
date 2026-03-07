@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { FC, ReactNode } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 // --- Icon Components ---
 const LocationIcon = () => (
@@ -126,21 +126,32 @@ interface ApartmentSearchProps {
 
 const ApartmentSearch: FC<ApartmentSearchProps> = ({ onSearch }) => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
-  const [propertyType, setPropertyType] = useState<string>("");
-  const [location, setLocation] = useState<string>("Dhanmondi, Dhaka");
-  const [priceRange, setPriceRange] = useState<string>("€10,000 - €200,000");
+  const [propertyType, setPropertyType] = useState<string>(searchParams.get("property_type") || "");
+  const [location, setLocation] = useState<string>(searchParams.get("location") || "");
+  const [priceRange, setPriceRange] = useState<string>(searchParams.get("price_range") || "");
+  const [rentalType, setRentalType] = useState<string>(searchParams.get("rental_type") || "");
+  const [rooms, setRooms] = useState<string>(searchParams.get("rooms") || "");
 
-  // 🔥 Modify Button → Navigate with Query Params
-  const handleModifySearch = () => {
-    const query = new URLSearchParams({
-      property_type: propertyType,
-      location: location,
-      price_range: priceRange,
-    }).toString();
+  const updateFilters = (key: string, value: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (value) {
+      params.set(key, value);
+    } else {
+      params.delete(key);
+    }
+    navigate(`/apartments?${params.toString()}`);
+  };
 
-    navigate(`/apartments?${query}`);
-    onSearch?.(); // existing functionality intact
+  const handleReset = () => {
+    setPropertyType("");
+    setLocation("");
+    setPriceRange("");
+    setRentalType("");
+    setRooms("");
+    navigate("/apartments");
+    onSearch?.();
   };
 
   return (
@@ -150,7 +161,10 @@ const ApartmentSearch: FC<ApartmentSearchProps> = ({ onSearch }) => {
         <CustomSelect
           label="Property type"
           value={propertyType}
-          onChange={setPropertyType}
+          onChange={(val) => {
+            setPropertyType(val);
+            updateFilters("property_type", val);
+          }}
           options={[
             "Apartment",
             "House",
@@ -177,7 +191,10 @@ const ApartmentSearch: FC<ApartmentSearchProps> = ({ onSearch }) => {
                 <input
                   type="text"
                   value={location}
-                  onChange={(e) => setLocation(e.target.value)}
+                  onChange={(e) => {
+                    setLocation(e.target.value);
+                    updateFilters("location", e.target.value);
+                  }}
                   placeholder="Enter location"
                   className="flex-1 bg-transparent outline-none text-gray-800 font-semibold placeholder-gray-400 truncate"
                   style={{ minWidth: 0 }}
@@ -191,22 +208,46 @@ const ApartmentSearch: FC<ApartmentSearchProps> = ({ onSearch }) => {
         <CustomSelect
           label="Price Range"
           value={priceRange}
-          onChange={setPriceRange}
+          onChange={(val) => {
+            setPriceRange(val);
+            updateFilters("price_range", val);
+          }}
           options={[
-            "€10,000 - €200,000",
-            "€200,001 - €500,000",
-            "€500,001 - €1,000,000",
-            "€1,000,001 - €2,000,000",
-            "Over €2,000,000",
+            "€500 - €1,000",
+            "€1,000 - €2,000",
+            "€2,000 - €5,000",
+            "Over €5,000",
           ]}
           placeholder="Any price" icon={undefined} />
 
-        {/* Modify Search */}
+        {/* Rental Type */}
+        <CustomSelect
+          label="Rental Type"
+          value={rentalType}
+          onChange={(val) => {
+            setRentalType(val);
+            updateFilters("rental_type", val);
+          }}
+          options={["Furnished", "Unfurnished"]}
+          placeholder="Any" icon={undefined} />
+
+        {/* Rooms */}
+        <CustomSelect
+          label="Rooms"
+          value={rooms}
+          onChange={(val) => {
+            setRooms(val);
+            updateFilters("rooms", val);
+          }}
+          options={["1+", "2+", "3+", "4+", "5+"]}
+          placeholder="Any" icon={undefined} />
+
+        {/* Reset Filters */}
         <button
-          onClick={handleModifySearch}
+          onClick={handleReset}
           className="w-full lg:w-auto px-10 py-5 bg-blue-600 text-white font-bold text-sm uppercase rounded-xl hover:bg-blue-700 active:scale-95 transition-all duration-200 shadow-lg whitespace-nowrap"
         >
-          Modify Search
+          Reset Filters
         </button>
       </div>
     </div>

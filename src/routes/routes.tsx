@@ -15,6 +15,9 @@ import HomeSearchResult from "../pages/HomeSearchResult/Result";
 import FAQ from "../pages/FAQ/FAQ";
 import Contact from "../pages/Contact/Contact";
 import Payment from "../pages/Payment/Payment";
+import PaymentSuccess from "../pages/Payment/PaymentSuccess";
+import PaymentCancel from "../pages/Payment/PaymentCancel";
+import Subscription from "../pages/Subscription/Subscription";
 import ProtectedRoute from "../components/ProtectedRoute";
 import NotFound from "../pages/NotFound/NotFound";
 import Unauthorized from "../pages/Unauthorized/Unauthorized";
@@ -87,6 +90,11 @@ const router = createBrowserRouter([
         element: <HomeSearchResult />,
       },
       {
+        path: "/subscription",
+        element: <Subscription />,
+      },
+
+      {
         path: "*",
         element: <NotFound />,
       },
@@ -123,6 +131,14 @@ const router = createBrowserRouter([
   {
     path: "/payment",
     element: <Payment />,
+  },
+  {
+    path: "/payment/success",
+    element: <PaymentSuccess />,
+  },
+  {
+    path: "/payment/cancel",
+    element: <PaymentCancel />,
   },
   // owner dashboard 
   {

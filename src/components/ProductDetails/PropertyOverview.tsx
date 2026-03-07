@@ -4,6 +4,11 @@ import surfaceIcon from '../../assets/productDetails/surface.svg';
 import piecesIcon from '../../assets/productDetails/piece.svg';
 import floorIcon from '../../assets/productDetails/floor.svg';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../../redux/featuresAPI/auth/auth.slice';
+import { useGetSubscriptionStatusQuery } from '../../redux/featuresAPI/subscription/subscription.api';
+import { useCreatePossessionMutation } from '../../redux/featuresAPI/tenant/possessions.api';
+import toast, { Toaster } from 'react-hot-toast';
 
 // Type for Detail Item
 type DetailItemProps = {
@@ -28,13 +33,45 @@ interface PropertyOverviewProps {
 
 const PropertyOverview: React.FC<PropertyOverviewProps> = ({ ad }) => {
   const navigate = useNavigate();
+  const user = useSelector(selectUser);
+  const { data: statusData, isLoading: isCheckingSubscription } = useGetSubscriptionStatusQuery({}, { skip: !user || user.role !== 'tenant' });
+  const [createPossession, { isLoading: isApplying }] = useCreatePossessionMutation();
 
-  const handleApplyClick = () => {
-    navigate('/premium');
+  const isTenant = user?.role === 'tenant';
+  const hasSubscription = statusData?.has_subscription || statusData?.status === 'active';
+
+  const handleApplyClick = async () => {
+    if (!user) {
+      toast.error('Please log in to apply for this property.');
+      navigate('/login');
+      return;
+    }
+
+    if (!isTenant) {
+      toast.error('Only tenants can apply for properties.');
+      return;
+    }
+
+    if (!hasSubscription) {
+      toast.error('You need an active Premium subscription to apply.');
+      navigate('/subscription');
+      return;
+    }
+
+    try {
+      await createPossession({ ad: ad.id }).unwrap();
+      toast.success('Your application has been successfully sent to the owner!');
+    } catch (error: any) {
+      console.error('Application error:', error);
+      // Handle potential duplicate applications based on API response structure
+      const errorMsg = error?.data?.ad?.[0] || error?.data?.non_field_errors?.[0] || error?.data?.message || 'Failed to submit application. You might have already applied or an error occurred.';
+      toast.error(errorMsg);
+    }
   };
 
   return (
-    <div className="container mx-auto px-4 lg:px-0 py-10">
+    <div className="container mx-auto px-4 lg:px-0 py-10 relative">
+      <Toaster position="top-center" />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Side */}
         <div className="lg:col-span-2">
@@ -70,9 +107,11 @@ const PropertyOverview: React.FC<PropertyOverviewProps> = ({ ad }) => {
 
             <button
               onClick={handleApplyClick}
-              className="w-full bg-[#256AF4] hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition duration-150 shadow-md"
+              disabled={isCheckingSubscription || isApplying}
+              className={`w-full text-white font-semibold py-3 rounded-lg transition duration-150 shadow-md ${isCheckingSubscription || isApplying ? 'bg-blue-400 cursor-not-allowed' : 'bg-[#256AF4] hover:bg-blue-700'
+                }`}
             >
-              APPLY
+              {isCheckingSubscription ? 'Checking Status...' : isApplying ? 'Applying...' : 'APPLY'}
             </button>
           </div>
         </div>

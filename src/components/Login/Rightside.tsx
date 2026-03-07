@@ -133,7 +133,12 @@ const Rightside = () => {
 
   useEffect(() => {
     if (localStorage.getItem("isLoggedIn") === "true") {
-      navigate("/dashboard-owner");
+      const role = localStorage.getItem("role");
+      if (role === "owner") {
+        navigate("/dashboard-owner");
+      } else if (role === "tenant") {
+        navigate("/");
+      }
     }
   }, [navigate]);
 

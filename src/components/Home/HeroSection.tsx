@@ -29,7 +29,7 @@ const HeroSection: React.FC = () => {
 
   const userRole =
     typeof window !== "undefined"
-      ? localStorage.getItem("detectedRole") || "tenant"
+      ? localStorage.getItem("role") || "tenant"
       : "owner";
 
   const [propertyOpen, setPropertyOpen] = useState(false);
@@ -174,24 +174,38 @@ const SearchForm: React.FC<any> = ({
     if (loading) return;
     setLoading(true);
 
-    const params = {
-      property_type:
-        selectedProperty !== t("search.property_type_placeholder")
-          ? propertyOptions.find((p: { label: string; value: string }) => p.label === selectedProperty)?.value
-          : "",
-      price:
-        selectedPrice !== t("search.price_range_placeholder")
-          ? selectedPrice
-          : "",
-      location: locationValue,
-    };
+    const params: Record<string, string> = {};
+
+    // Property type
+    if (selectedProperty !== t("search.property_type_placeholder")) {
+      const propertyValue = propertyOptions.find(
+        (p: { label: string; value: string }) => p.label === selectedProperty
+      )?.value;
+      if (propertyValue) params.property_type = propertyValue;
+    }
+
+    // Location
+    if (locationValue) params.location = locationValue;
+
+    // Price range - convert to the format used in Apartments page
+    if (selectedPrice !== t("search.price_range_placeholder")) {
+      const priceValue = priceOptions.find(
+        (p: { label: string; value: string }) => p.label === selectedPrice
+      )?.value;
+
+      if (priceValue) {
+        if (priceValue === "0-1000") params.price_range = "€500 - €1,000";
+        else if (priceValue === "1000-1500") params.price_range = "€1,000 - €2,000";
+        else if (priceValue === "1500-2000") params.price_range = "€1,000 - €2,000";
+        else if (priceValue === "2000-3000") params.price_range = "€2,000 - €5,000";
+        else if (priceValue === "3000-5000") params.price_range = "€2,000 - €5,000";
+        else if (priceValue === "5000+") params.price_range = "Over €5,000";
+      }
+    }
 
     const query = new URLSearchParams(params).toString();
-    // console.log(query);
-
-    setTimeout(() => {
-      navigate(`/search-result?${query}`);
-    }, 800);
+    navigate(`/apartments${query ? `?${query}` : ""}`);
+    setLoading(false);
   };
 
   return (

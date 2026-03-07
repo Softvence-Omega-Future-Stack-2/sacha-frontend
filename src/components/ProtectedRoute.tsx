@@ -1,24 +1,38 @@
-import { Navigate, useLocation } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
-import React from "react";
+import { Navigate } from "react-router-dom";
+import { useSubscription } from "../hooks/useSubscription";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
   allowedRoles?: string[];
+  requireSubscription?: boolean;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles }) => {
-  const { isAuthenticated, user, token } = useAuth();
-  const location = useLocation();
+const ProtectedRoute = ({ children, allowedRoles, requireSubscription = false }: ProtectedRouteProps) => {
+  const { hasSubscription, isLoading } = useSubscription();
+  const userRole = localStorage.getItem("role") || "tenant";
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
 
-  if (!token || !isAuthenticated) {
-    
-    return <Navigate to="/login" state={{ from: location }} replace />;
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+      </div>
+    );
   }
 
-  if (allowedRoles && user && !allowedRoles.includes(user.role)) {
-    // Role not authorized, redirect to unauthorized or home
+  // Check if user is logged in
+  if (!isLoggedIn) {
+    return <Navigate to="/login" replace />;
+  }
+
+  // Check role-based access
+  if (allowedRoles && !allowedRoles.includes(userRole)) {
     return <Navigate to="/unauthorized" replace />;
+  }
+
+  // Check subscription requirement (only for tenants)
+  if (requireSubscription && userRole === "tenant" && !hasSubscription) {
+    return <Navigate to="/subscription" replace />;
   }
 
   return <>{children}</>;

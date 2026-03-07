@@ -17,8 +17,8 @@ const App = () => {
     location: searchParams.get("location") || "",
   };
 
-  const { data, isLoading } = useSearchPropertiesQuery(params); // ⭐ NEW
-  const apartments = data?.results || []; // ⭐ Dummy removed
+  const { data, isLoading } = useSearchPropertiesQuery(params); 
+  const apartments = data?.results || [];
 
   const handleShowMore = () => {
     setVisibleCount(apartments.length);

@@ -1,5 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Bell, ChevronDown } from 'lucide-react';
+import { Bell, ChevronDown, Loader2 } from 'lucide-react';
+import {
+    useGetNotificationsQuery,
+    useGetUnreadCountQuery,
+    useMarkReadMutation,
+    useMarkAllReadMutation
+} from '../../../redux/featuresAPI/notifications/notifications.api';
+import { formatDistanceToNow } from 'date-fns';
 
 // Assuming you have a user image path
 import userProfile from '../../../assets/dashboard/topBarWomanImg.jpg';
@@ -14,11 +21,7 @@ const languages = [
 ];
 
 // Data for the Notifications (for demonstration)
-const notifications = [
-    { id: 1, message: 'New user registered!', time: '5 minutes ago' },
-    { id: 2, message: 'Your report is ready for download.', time: '1 hour ago' },
-    { id: 3, message: 'System update scheduled for tomorrow.', time: 'Yesterday' },
-];
+// Removed mock notifications
 
 // Reusable Dropdown Item component
 const DropdownItem: React.FC<{ flag: string; name: string; onClick: () => void }> = ({ flag, name, onClick }) => (
@@ -45,6 +48,18 @@ const Topbar: React.FC<HeaderProps> = ({ sidebarCollapsed, onProfileClick }) => 
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isNotifOpen, setIsNotifOpen] = useState(false);
     const [selectedLanguage, setSelectedLanguage] = useState(languages[0]);
+
+    // Notification API hooks
+    const { data: apiNotifications = [], isLoading: isLoadingNotifs } = useGetNotificationsQuery(undefined, {
+        pollingInterval: 30000,
+    });
+    const { data: unreadData } = useGetUnreadCountQuery(undefined, {
+        pollingInterval: 30000,
+    });
+    const [markRead] = useMarkReadMutation();
+    const [markAllRead] = useMarkAllReadMutation();
+
+    const unreadCount = unreadData?.count ?? 0;
 
     const dropdownRef = useRef<HTMLDivElement>(null);
     const notifRef = useRef<HTMLDivElement>(null);
@@ -138,7 +153,6 @@ const Topbar: React.FC<HeaderProps> = ({ sidebarCollapsed, onProfileClick }) => 
                         </div>
                     </div>
 
-                    {/* 2. Notification Bell & Window */}
                     <div className="relative  border-r border-gray-200">
                         <button
                             ref={bellRef}
@@ -146,34 +160,70 @@ const Topbar: React.FC<HeaderProps> = ({ sidebarCollapsed, onProfileClick }) => 
                             onClick={() => setIsNotifOpen(!isNotifOpen)}
                         >
                             <Bell className="w-5 h-5" />
-                            {/* Optional: Notification Badge */}
-                            {notifications.length > 0 && (
-                                <span className="absolute -top-2 right-1 block h-2 w-2 rounded-full ring-2 ring-white ">{notifications.length}</span>
+                            {/* Notification Badge */}
+                            {unreadCount > 0 && (
+                                <span className="absolute -top-1 right-0 flex items-center justify-center bg-red-500 text-white text-[10px] font-bold h-4 w-4 rounded-full ring-2 ring-white">
+                                    {unreadCount > 9 ? '9+' : unreadCount}
+                                </span>
                             )}
                         </button>
 
                         {/* Notification Window (Animated) */}
                         <div
                             ref={notifRef}
-                            className={`absolute right-0 mt-3 w-72 bg-white border border-gray-200 rounded-lg shadow-xl overflow-hidden transition-all duration-300 ease-in-out ${isNotifOpen
+                            className={`absolute right-0 mt-3 w-80 bg-white border border-gray-200 rounded-lg shadow-xl overflow-hidden transition-all duration-300 ease-in-out ${isNotifOpen
                                 ? 'opacity-100 scale-100 translate-y-0'
                                 : 'opacity-0 scale-95 translate-y-2 pointer-events-none'
                                 }`}
                             style={{ transformOrigin: 'top right' }}
                         >
-                            <div className="p-4 border-b border-gray-100">
-                                <h3 className="text-lg font-semibold text-gray-800">Notifications ({notifications.length})</h3>
+                            <div className="p-4 border-b border-gray-100 flex justify-between items-center">
+                                <h3 className="text-sm font-semibold text-gray-800">Notifications</h3>
+                                {apiNotifications.some(n => !n.is_read) && (
+                                    <button
+                                        onClick={() => markAllRead()}
+                                        className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                                    >
+                                        Mark all as read
+                                    </button>
+                                )}
                             </div>
-                            <ul className="divide-y divide-gray-100 max-h-60 overflow-y-auto">
-                                {notifications.map((notif) => (
-                                    <li key={notif.id} className="p-3 hover:bg-gray-50 cursor-pointer">
-                                        <p className="text-sm font-medium text-gray-800">{notif.message}</p>
-                                        <p className="text-xs text-gray-500 mt-1">{notif.time}</p>
-                                    </li>
-                                ))}
+                            <ul className="divide-y divide-gray-100 max-h-80 overflow-y-auto">
+                                {isLoadingNotifs ? (
+                                    <div className="p-8 flex justify-center">
+                                        <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+                                    </div>
+                                ) : apiNotifications.length === 0 ? (
+                                    <div className="p-8 text-center text-gray-500 text-sm">
+                                        No notifications yet
+                                    </div>
+                                ) : (
+                                    apiNotifications.map((notif) => (
+                                        <li
+                                            key={notif.id}
+                                            className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors relative ${!notif.is_read ? 'bg-blue-50/30' : ''}`}
+                                            onClick={() => !notif.is_read && markRead(notif.id)}
+                                        >
+                                            <div className="flex justify-between items-start gap-2">
+                                                <div className="flex-1">
+                                                    <p className={`text-sm ${!notif.is_read ? 'font-semibold text-gray-900' : 'text-gray-700'}`}>
+                                                        {notif.title || 'Notification'}
+                                                    </p>
+                                                    <p className="text-xs text-gray-600 mt-1 line-clamp-2">{notif.message}</p>
+                                                    <p className="text-[10px] text-gray-400 mt-2">
+                                                        {notif.created_at ? formatDistanceToNow(new Date(notif.created_at), { addSuffix: true }) : ''}
+                                                    </p>
+                                                </div>
+                                                {!notif.is_read && (
+                                                    <div className="w-2 h-2 bg-blue-600 rounded-full mt-1.5 flex-shrink-0"></div>
+                                                )}
+                                            </div>
+                                        </li>
+                                    ))
+                                )}
                             </ul>
                             <div className="p-3 text-center bg-gray-50 hover:bg-gray-100 border-t border-gray-100">
-                                <a href="#" className="text-sm text-indigo-600 font-medium">View All Notifications</a>
+                                <button className="text-xs text-blue-600 font-medium w-full">View All Notifications</button>
                             </div>
                         </div>
                     </div>

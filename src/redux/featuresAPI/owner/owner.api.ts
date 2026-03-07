@@ -78,7 +78,7 @@ export const ownerAPI = baseAPI.injectEndpoints({
             invalidatesTags: ["Properties"],
         }),
         getPublicAds: build.query({
-            query: (params) => ({
+            query: (params = {}) => ({
                 url: "/owner/public/ads/",
                 method: "GET",
                 params,
@@ -86,7 +86,7 @@ export const ownerAPI = baseAPI.injectEndpoints({
             providesTags: ["Properties"],
         }),
         getPublicAdById: build.query({
-            query: (id: number | string) => ({
+            query: (id) => ({
                 url: `/owner/public/ads/${id}/`,
                 method: "GET",
             }),

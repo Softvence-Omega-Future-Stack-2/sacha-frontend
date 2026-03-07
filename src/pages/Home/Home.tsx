@@ -10,27 +10,8 @@ import FeaturedApartments from "../../components/Home/FeaturedSection";
 import HeroFeaturesSection from "../../components/Home/HeroFeaturesSection";
 import StrongTenantSection from "../../components/Home/StrongTenantSection";
 import TrustpilotTestimonials from "../../components/Home/testimonialsSection";
-import { useEffect, useState } from "react";
 
 const Home = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    const checkLoginStatus = () => {
-      const loggedIn = localStorage.getItem("isLoggedIn") === "true";
-      setIsLoggedIn(loggedIn);
-    };
-
-    checkLoginStatus();
-    window.addEventListener("storage", checkLoginStatus);
-
-    return () => window.removeEventListener("storage", checkLoginStatus);
-  }, []);
-
-  const userRole =
-    typeof window !== "undefined"
-      ? localStorage.getItem("role") || "tenant"
-      : "tenant";
   return (
     <>
 

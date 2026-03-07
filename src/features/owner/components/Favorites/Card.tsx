@@ -29,9 +29,8 @@ const CardFavoritesPages: React.FC<PropertyCardProps> = ({
   };
 
   const handleViewDetails = () => {
-    navigate(`/product-details`);
+    navigate(`/apartments/product-details/${id}`);
   };
-  console.log(id);
 
   return (
     <>

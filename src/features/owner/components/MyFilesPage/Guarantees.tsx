@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import Spouse from "./Spouse";
+import { useAddGuaranteeMutation, useGetGuaranteesQuery } from "../../../../redux/featuresAPI/tenant/guarantee.api";
+import toast, { Toaster } from "react-hot-toast";
 
 // গ্যারান্টি নির্বাচনের ধরন
 type GuaranteeType = "person" | "organization" | "legal";
@@ -135,21 +137,101 @@ export default function GuaranteeForm() {
   const [orgSubtype, setOrgSubtype] = useState<"visale" | "other">("visale");
   const [loading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [addGuarantee] = useAddGuaranteeMutation();
+  const { data: guaranteeData } = useGetGuaranteesQuery({});
 
-  // Placeholder function for form submission
-  const handleSubmit = () => {
+  const hasGuarantee = guaranteeData?.tenant_guarantee && guaranteeData.tenant_guarantee.length > 0;
+
+  // Form state
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    professionalSituation: "",
+    netIncome: "",
+    legalEntityName: "",
+    repFirstName: "",
+    repLastName: "",
+  });
+
+  const handleSubmit = async () => {
+    if (hasGuarantee) {
+      toast.error("You already have a guarantee. Please remove it before adding a new one.");
+      return;
+    }
+
+    // Validation
+    if (type === "person") {
+      if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone || !formData.professionalSituation || !formData.netIncome) {
+        toast.error("Please fill in all required fields");
+        return;
+      }
+    } else if (type === "legal") {
+      if (!formData.legalEntityName || !formData.repFirstName || !formData.repLastName) {
+        toast.error("Please fill in all required fields");
+        return;
+      }
+    }
+
     setLoading(true);
-    // Simulate API call delay
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      const data = new FormData();
+      
+      // Always append guarantee_type
+      if (type === "person") {
+        data.append("guarantee_type", "A natural person");
+        data.append("first_name", formData.firstName);
+        data.append("last_name", formData.lastName);
+        data.append("email", formData.email);
+        data.append("phone_number", formData.phone);
+        data.append("professional_situation", formData.professionalSituation);
+        data.append("net_income", formData.netIncome);
+      } else if (type === "organization") {
+        data.append("guarantee_type", "An organization");
+        data.append("organization_type", orgSubtype === "visale" ? "Visale" : "Other organization");
+      } else if (type === "legal") {
+        data.append("guarantee_type", "A legal entity");
+        data.append("legal_entity_name", formData.legalEntityName);
+        data.append("representative_first_name", formData.repFirstName);
+        data.append("representative_last_name", formData.repLastName);
+      }
+
+      const result = await addGuarantee(data).unwrap();
+      toast.success(result.message || "Guarantee added successfully!");
       setShowToast(true);
-    }, 2000);
+      
+      // Reset form
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        professionalSituation: "",
+        netIncome: "",
+        legalEntityName: "",
+        repFirstName: "",
+        repLastName: "",
+      });
+    } catch (error: any) {
+      console.error("Guarantee error:", error);
+      const errorMsg = error?.data?.message || error?.message || "Failed to add guarantee. Please try again.";
+      toast.error(errorMsg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="flex justify-center items-start pt-8">
+      <Toaster position="top-center" />
       {/* Main form container, constrained on large screens and fully responsive */}
       <div className="w-full bg-white rounded-2xl  border border-gray-100 p-4 md:p-4">
+        {hasGuarantee && (
+          <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-xl">
+            <p className="text-yellow-800 font-medium">You already have a guarantee on file. You cannot add another guarantee.</p>
+          </div>
+        )}
         <div className="w-full flex justify-between     px-4 sm:px-6 lg:px-4 py-6 sm:py-6">
           {/* Title - Always Centered */}
           <h2 className="text-2xl sm:text-3xl font-medium text-[#061251] text-center mb-10 sm:mb-14">
@@ -240,7 +322,8 @@ export default function GuaranteeForm() {
                 <input
                   id="person-first-name"
                   type="text"
-                  defaultValue="Asibul"
+                  value={formData.firstName}
+                  onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                   placeholder="Enter first name"
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none  transition duration-150"
                 />
@@ -257,7 +340,8 @@ export default function GuaranteeForm() {
                 <input
                   id="person-last-name"
                   type="text"
-                  defaultValue="Asikl"
+                  value={formData.lastName}
+                  onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                   placeholder="Enter last name"
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none  transition duration-150"
                 />
@@ -274,7 +358,8 @@ export default function GuaranteeForm() {
                 <input
                   id="person-email"
                   type="email"
-                  defaultValue="username@gmail.com"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="Enter email address"
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none  transition duration-150"
                 />
@@ -293,7 +378,8 @@ export default function GuaranteeForm() {
                   <input
                     id="person-phone"
                     type="tel"
-                    defaultValue="1234"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     placeholder="Enter phone number"
                     className="flex-1 px-4 py-2 border border-gray-300 rounded-r-xl focus:outline-none  transition duration-150"
                   />
@@ -310,8 +396,8 @@ export default function GuaranteeForm() {
                 </label>
                 <select
                   id="person-situation"
-                  // State to track selected value for dynamic class application (though options styling is limited)
-                  defaultValue={professionalSituations[0]}
+                  value={formData.professionalSituation}
+                  onChange={(e) => setFormData({ ...formData, professionalSituation: e.target.value })}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none pr-10 cursor-pointer transition duration-150 text-gray-500 font-medium"
                   // Updated appearance for a cleaner look with a custom arrow
                   style={{
@@ -352,6 +438,8 @@ export default function GuaranteeForm() {
                   <input
                     id="person-income"
                     type="number"
+                    value={formData.netIncome}
+                    onChange={(e) => setFormData({ ...formData, netIncome: e.target.value })}
                     placeholder="e.g., 3000"
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 pr-12 transition duration-150"
                   />
@@ -366,9 +454,9 @@ export default function GuaranteeForm() {
             <div className="mt-2 pt-6 flex justify-end">
               <button
                 onClick={handleSubmit}
-                disabled={loading}
+                disabled={loading || hasGuarantee}
                 className={`min-w-[220px] px-8 py-4 text-white font-medium rounded-xl transition-all flex items-center justify-center gap-3 text-[14px]
-                            ${loading
+                            ${loading || hasGuarantee
                     ? "bg-blue-400 cursor-not-allowed"
                     : "bg-[#256AF4] hover:bg-blue-700 "
                   }
@@ -461,9 +549,9 @@ export default function GuaranteeForm() {
             <div className="mt-2 pt-6 flex justify-end">
               <button
                 onClick={handleSubmit}
-                disabled={loading}
+                disabled={loading || hasGuarantee}
                 className={`min-w-[220px] px-8 py-4 text-white font-medium rounded-xl transition-all flex items-center justify-center gap-3 text-[14px]
-                            ${loading
+                            ${loading || hasGuarantee
                     ? "bg-blue-400 cursor-not-allowed"
                     : "bg-[#256AF4] hover:bg-blue-700 "
                   }
@@ -519,7 +607,8 @@ export default function GuaranteeForm() {
                 <input
                   id="legal-name"
                   type="text"
-                  defaultValue="Example Corp LLC"
+                  value={formData.legalEntityName}
+                  onChange={(e) => setFormData({ ...formData, legalEntityName: e.target.value })}
                   placeholder="Enter legal entity name"
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none  transition duration-150"
                 />
@@ -541,7 +630,8 @@ export default function GuaranteeForm() {
                     <input
                       id="rep-first-name"
                       type="text"
-                      defaultValue="John"
+                      value={formData.repFirstName}
+                      onChange={(e) => setFormData({ ...formData, repFirstName: e.target.value })}
                       placeholder="Representative's first name"
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none transition duration-150"
                     />
@@ -556,7 +646,8 @@ export default function GuaranteeForm() {
                     <input
                       id="rep-last-name"
                       type="text"
-                      defaultValue="Doe"
+                      value={formData.repLastName}
+                      onChange={(e) => setFormData({ ...formData, repLastName: e.target.value })}
                       placeholder="Representative's last name"
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none  transition duration-150"
                     />
@@ -568,9 +659,9 @@ export default function GuaranteeForm() {
             <div className="mt-2 pt-6 flex justify-end">
               <button
                 onClick={handleSubmit}
-                disabled={loading}
+                disabled={loading || hasGuarantee}
                 className={`min-w-[220px] px-8 py-4 text-white font-medium rounded-xl transition-all flex items-center justify-center gap-3 text-[14px]
-                            ${loading
+                            ${loading || hasGuarantee
                     ? "bg-blue-400 cursor-not-allowed"
                     : "bg-[#256AF4] hover:bg-blue-700 "
                   }

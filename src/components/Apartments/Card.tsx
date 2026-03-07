@@ -1,6 +1,7 @@
 import { Heart } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAddFavoriteMutation, useRemoveFavoriteMutation } from "../../redux/featuresAPI/favourite/favoritesApi";
 
 // Import SVGs as regular image URLs
 import locationIcon from "../../assets/appartment/marker-pin-01.svg";
@@ -8,20 +9,42 @@ import furnitureIcon from "../../assets/appartment/solar_sofa-linear.svg";
 import roomIcon from "../../assets/appartment/fluent-mdl2_room.svg";
 import scaleIcon from "../../assets/appartment/scale-01.svg";
 
-const ApartmentCard = ({ apartment }: { apartment: any }) => {
+const ApartmentCard = ({ apartment, favoriteId }: { apartment: any; favoriteId?: number }) => {
   const { price, frequency, title, location, details } = apartment;
 
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(!!favoriteId);
+  const [currentFavoriteId, setCurrentFavoriteId] = useState(favoriteId);
   const [message, setMessage] = useState("");
 
   const navigate = useNavigate();
+  const [addFavorite] = useAddFavoriteMutation();
+  const [removeFavorite] = useRemoveFavoriteMutation();
 
-  const handleFavorite = () => {
-    const newState = !isFavorite;
-    setIsFavorite(newState);
-    setMessage(newState ? "Saved successfully!" : "Removed from favorites.");
+  useEffect(() => {
+    setIsFavorite(!!favoriteId);
+    setCurrentFavoriteId(favoriteId);
+  }, [favoriteId]);
 
-    // Auto hide toast after 2.5 seconds
+  const handleFavorite = async () => {
+    try {
+      if (isFavorite && currentFavoriteId) {
+        await removeFavorite(currentFavoriteId).unwrap();
+        setIsFavorite(false);
+        setCurrentFavoriteId(undefined);
+        setMessage("Removed from favorites.");
+      } else {
+        const formData = new FormData();
+        formData.append("ad", apartment.id.toString());
+        const result = await addFavorite(formData).unwrap();
+        setIsFavorite(true);
+        setCurrentFavoriteId(result.id);
+        setMessage("Saved successfully!");
+      }
+    } catch (error) {
+      console.error("Favorite action failed:", error);
+      setMessage("Action failed. Please try again.");
+    }
+
     setTimeout(() => setMessage(""), 2500);
   };
 

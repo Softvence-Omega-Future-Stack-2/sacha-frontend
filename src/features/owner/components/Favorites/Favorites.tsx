@@ -22,7 +22,21 @@ const FavoritesPages: React.FC = () => {
 
   // FORMAT API → UI
   useEffect(() => {
-    if (data?.results) {
+    if (data?.favorites) {
+      const formatted = data.favorites.map((item: any) => {
+        const ad = item.ad_details;
+        return {
+          id: ad.id.toString(),
+          favoriteId: item.id,
+          price: ad.rent,
+          title: ad.title,
+          location: `${ad.city}, ${ad.postal_code}`,
+          image: ad.images?.find((img: any) => img.is_primary)?.image || ad.images?.[0]?.image || "/no-image.png",
+          isFavorite: true,
+        };
+      });
+      setFavorites(formatted);
+    } else if (data?.results) {
       const formatted = data.results.map((item: any) => {
         const p = item.property_details || item.ad || {};
         return {

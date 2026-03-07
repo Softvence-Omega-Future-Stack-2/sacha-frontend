@@ -1,12 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Paperclip, Smile, X, Send, ArrowLeft } from 'lucide-react';
+import { Search, Paperclip, Smile, X, Send, ArrowLeft, Loader2 } from 'lucide-react';
 import Title from '../Title';
+import {
+    useGetConversationsQuery,
+    useGetMessagesQuery,
+    useSendMessageMutation
+} from '../../../../redux/featuresAPI/chat/chat.api';
+import { useAppSelector } from '../../../../redux/hooks';
+import { selectUser } from '../../../../redux/featuresAPI/auth/auth.slice';
+import { format } from 'date-fns';
 
 interface Message {
-    sender: string; // 'Kurmisadia' or 'You'
+    sender: string;
     text: string;
     time: string;
-    file?: { name: string }; // optional file info
+    file?: { name: string };
+    id?: number;
 }
 
 interface Chat {
@@ -19,69 +28,6 @@ interface Chat {
     online?: boolean;
     isAdmin?: boolean;
 }
-
-// Mock Data (unchanged)
-const initialChats: Chat[] = [
-    {
-        id: '1',
-        name: 'Kurmisadia',
-        avatar: '👩‍⚕️',
-        message: 'Hello Dr. Johnson, I need to consult with you about a patient with unusual',
-        time: '5:11 AM',
-        online: true,
-        isAdmin: true,
-    },
-    {
-        id: '2',
-        name: 'Dr. Keren nix',
-        avatar: '🧑‍⚕️',
-        message: "I'll check the patient's records",
-        time: '2 minutes ago',
-        unread: 1,
-    },
-    {
-        id: '3',
-        name: 'Dr. Floyd Miles',
-        avatar: '👩‍⚕️',
-        message: "I'll check the patient's records",
-        time: 'Yesterday',
-    },
-    {
-        id: '4',
-        name: 'Dr. Jane Cooper',
-        avatar: '👩‍⚕️',
-        message: "I'll check the patient's records",
-        time: 'Monday',
-        unread: 1,
-    },
-    {
-        id: '5',
-        name: 'Dr. Robert Fox',
-        avatar: '🧑‍⚕️',
-        message: "I'll check the patient's records",
-        time: 'Last week',
-    },
-];
-
-const initialMessages: Record<string, Message[]> = {
-    '1': [
-        { sender: 'Kurmisadia', text: 'Hello Dr. Johnson, I need to consult with you about a patient with unusual symptoms.', time: '5:11 AM' },
-        { sender: 'You', text: "Of course. What are the symptoms you're seeing? Can you send me the latest labs?", time: '5:12 AM' },
-        { sender: 'Kurmisadia', text: 'They have a high fever, severe headache, and unusual maculopapular rash across the torso. Labs are attached.', time: '5:15 AM' },
-        { sender: 'You', text: "I see. Let me review the charts and get back to you in 5 minutes.", time: '5:16 AM' },
-        { sender: 'Kurmisadia', text: 'Acknowledged. Waiting for your input.', time: '5:20 AM' },
-        { sender: 'You', text: "The white blood cell count is quite low. I suggest starting empiric therapy immediately.", time: '5:25 AM' },
-        { sender: 'Kurmisadia', text: 'Understood. Starting treatment plan now. Thanks for the quick consultation!', time: '5:27 AM' },
-        { sender: 'You', text: 'Anytime. Keep me updated on the patient status.', time: '5:28 AM' },
-        { sender: 'Kurmisadia', text: 'Will do. Thanks! 👍', time: '5:30 AM' },
-        { sender: 'You', text: 'Great work team! 😊', time: '5:35 AM' },
-        { sender: 'Kurmisadia', text: 'Patient is stable now. 🙏', time: '5:40 AM' },
-        { sender: 'You', text: 'Fantastic news! 🎉', time: '5:41 AM' },
-    ],
-    '2': [
-        { sender: 'Dr. Keren nix', text: 'Checking records now...', time: '2 minutes ago' },
-    ],
-};
 
 const mockEmojis = [
     '👍', '❤️', '😂', '🔥', '🙏', '💯', '😊', '😍', '😎', '🎉',
@@ -148,18 +94,31 @@ const EmojiPicker: React.FC<{ onSelect: (emoji: string) => void; onClose: () => 
     );
 };
 
-const ActiveChat: React.FC<{ 
-    activeChat: Chat | undefined; 
-    messages: Message[]; 
-    setMessages: React.Dispatch<React.SetStateAction<Record<string, Message[]>>>; 
-    onBack: () => void 
-}> = ({ activeChat, messages, setMessages, onBack }) => {
+const ActiveChat: React.FC<{
+    activeChat: Chat | undefined;
+    onBack: () => void
+}> = ({ activeChat, onBack }) => {
+    const user = useAppSelector(selectUser);
     const [inputMessage, setInputMessage] = useState('');
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-    const [attachedFile, setAttachedFile] = useState<File | null>(null); // new state for file
+    const [attachedFile, setAttachedFile] = useState<File | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const { data: apiMessages = [], isLoading } = useGetMessagesQuery(activeChat?.id || '', {
+        skip: !activeChat?.id,
+        pollingInterval: 3000,
+    });
+
+    const [sendMessage, { isLoading: isSending }] = useSendMessageMutation();
+
+    const formattedMessages: Message[] = apiMessages.map((msg: any) => ({
+        id: msg.id,
+        sender: msg.sender === user?.id ? 'You' : activeChat?.name || 'User',
+        text: msg.content,
+        time: msg.timestamp ? format(new Date(msg.timestamp), 'hh:mm a') : '',
+    }));
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -167,7 +126,7 @@ const ActiveChat: React.FC<{
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages]);
+    }, [formattedMessages]);
 
     if (!activeChat) {
         return (
@@ -177,23 +136,20 @@ const ActiveChat: React.FC<{
         );
     }
 
-    const handleSendMessage = () => {
+    const handleSendMessage = async () => {
         if ((inputMessage.trim() || attachedFile) && activeChat) {
-            const newMessage: Message = {
-                sender: 'You',
-                text: inputMessage.trim(),
-                time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }),
-                ...(attachedFile && { file: { name: attachedFile.name } }),
-            };
+            try {
+                await sendMessage({
+                    room_id: activeChat.id,
+                    content: inputMessage.trim(),
+                }).unwrap();
 
-            setMessages(prevMessages => ({
-                ...prevMessages,
-                [activeChat.id]: [...(prevMessages[activeChat.id] || []), newMessage],
-            }));
-
-            setInputMessage('');
-            setAttachedFile(null);
-            setShowEmojiPicker(false);
+                setInputMessage('');
+                setAttachedFile(null);
+                setShowEmojiPicker(false);
+            } catch (err) {
+                console.error('Failed to send message:', err);
+            }
         }
     };
 
@@ -244,35 +200,45 @@ const ActiveChat: React.FC<{
             </div>
 
             {/* Messages Container */}
-            <div 
-                className="flex-1 overflow-y-auto px-5 py-2 bg-gray-50 max-h-96 lg:max-h-[600px]"
+            <div
+                className="flex-1 overflow-y-auto px-5 py-2 bg-gray-50 max-h-96 lg:max-h-[600px] flex flex-col"
                 style={{ overflowY: 'scroll' }}
             >
-                {messages.map((msg, i) => (
-                    <div
-                        key={i}
-                        className={`mb-4 flex ${msg.sender === 'You' ? 'justify-end' : 'justify-start'}`}
-                    >
-                        <div
-                            className={`max-w-56 px-4 py-2 rounded-2xl ${msg.sender === 'You'
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-white text-gray-800'
-                                }`}
-                        >
-                            <p className="text-sm font-medium">{msg.sender === 'You' ? 'You' : msg.sender}</p>
-                            <p className="text-sm mt-1 break-words whitespace-pre-wrap">
-                                {msg.text}
-                            </p>
-                            {msg.file && (
-                                <div className="mt-2 p-2  bg-opacity-20 rounded flex items-center gap-2">
-                                    <Paperclip className="w-4 h-4" />
-                                    <span className="text-xs">{msg.file.name}</span>
-                                </div>
-                            )}
-                            <p className="text-xs mt-1 opacity-70 text-right">{msg.time}</p>
-                        </div>
+                {isLoading ? (
+                    <div className="flex-1 flex items-center justify-center">
+                        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
                     </div>
-                ))}
+                ) : formattedMessages.length === 0 ? (
+                    <div className="flex-1 flex items-center justify-center">
+                        <p className="text-gray-500">No messages yet. Say hello!</p>
+                    </div>
+                ) : (
+                    formattedMessages.map((msg, i) => (
+                        <div
+                            key={msg.id || i}
+                            className={`mb-4 flex ${msg.sender === 'You' ? 'justify-end' : 'justify-start'}`}
+                        >
+                            <div
+                                className={`max-w-56 px-4 py-2 rounded-2xl ${msg.sender === 'You'
+                                    ? 'bg-blue-600 text-white'
+                                    : 'bg-white text-gray-800 border border-gray-100 shadow-sm'
+                                    }`}
+                            >
+                                <p className="text-sm font-medium">{msg.sender === 'You' ? 'You' : msg.sender}</p>
+                                <p className="text-sm mt-1 break-words whitespace-pre-wrap">
+                                    {msg.text}
+                                </p>
+                                {msg.file && (
+                                    <div className="mt-2 p-2 bg-opacity-20 rounded flex items-center gap-2">
+                                        <Paperclip className="w-4 h-4" />
+                                        <span className="text-xs">{msg.file.name}</span>
+                                    </div>
+                                )}
+                                <p className="text-xs mt-1 opacity-70 text-right">{msg.time}</p>
+                            </div>
+                        </div>
+                    ))
+                )}
                 <div ref={messagesEndRef} />
             </div>
 
@@ -350,9 +316,9 @@ const ActiveChat: React.FC<{
                     <button
                         className="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
                         onClick={handleSendMessage}
-                        disabled={!inputMessage.trim() && !attachedFile}
+                        disabled={(!inputMessage.trim() && !attachedFile) || isSending}
                     >
-                        <Send className="w-5 h-5" />
+                        {isSending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
                     </button>
                 </div>
             </div>
@@ -361,11 +327,18 @@ const ActiveChat: React.FC<{
 };
 
 export default function App() {
-    const [activeChatId, setActiveChatId] = useState(initialChats[0].id);
+    const { data: apiConversations = [], isLoading: isLoadingConversations } = useGetConversationsQuery(undefined, {
+        pollingInterval: 5000,
+    });
+    const [activeChatId, setActiveChatId] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
-    const [chatMessages, setChatMessages] = useState<Record<string, Message[]>>(initialMessages);
-    const [chats] = useState(initialChats);
     const [isChatOpenOnMobile, setIsChatOpenOnMobile] = useState(false);
+
+    useEffect(() => {
+        if (apiConversations.length > 0 && !activeChatId) {
+            setActiveChatId(apiConversations[0].id);
+        }
+    }, [apiConversations, activeChatId]);
 
     const handleChatClick = (id: string) => {
         setActiveChatId(id);
@@ -380,12 +353,20 @@ export default function App() {
         setSearchQuery(event.target.value);
     };
 
+    const chats: Chat[] = apiConversations.map((conv: any) => ({
+        id: conv.id,
+        name: conv.other_participant?.username || conv.room_name || `Room ${conv.id}`,
+        avatar: conv.other_participant?.avatar || '👤',
+        message: conv.last_message?.content || 'No messages yet',
+        time: conv.last_message?.timestamp ? format(new Date(conv.last_message.timestamp), 'hh:mm a') : '',
+        online: false,
+    }));
+
     const filteredChats = chats.filter(chat =>
         chat.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     const activeChat = chats.find(chat => chat.id === activeChatId);
-    const currentMessages = chatMessages[activeChatId] || [];
 
     const sidebarClass = isChatOpenOnMobile ? 'hidden lg:flex' : 'flex';
     const activeChatClass = isChatOpenOnMobile ? 'flex' : 'hidden lg:flex';
@@ -411,25 +392,31 @@ export default function App() {
                     </div>
 
                     <div className="flex-1 overflow-y-auto">
-                        {filteredChats.map((chat) => (
-                            <ChatItem
-                                key={chat.id}
-                                chat={chat}
-                                isActive={chat.id === activeChatId}
-                                onClick={handleChatClick}
-                            />
-                        ))}
-                   
-
- </div>
+                        {isLoadingConversations ? (
+                            <div className="flex justify-center p-8">
+                                <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+                            </div>
+                        ) : filteredChats.length === 0 ? (
+                            <div className="p-8 text-center text-gray-500">
+                                {searchQuery ? 'No conversations found' : 'No conversations yet'}
+                            </div>
+                        ) : (
+                            filteredChats.map((chat) => (
+                                <ChatItem
+                                    key={chat.id}
+                                    chat={chat}
+                                    isActive={chat.id === activeChatId}
+                                    onClick={handleChatClick}
+                                />
+                            ))
+                        )}
+                    </div>
                 </div>
 
                 {/* Active Chat */}
                 <div className={`w-full ${activeChatClass} flex-col`}>
                     <ActiveChat
                         activeChat={activeChat}
-                        messages={currentMessages}
-                        setMessages={setChatMessages}
                         onBack={handleBackClick}
                     />
                 </div>

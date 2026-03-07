@@ -5,6 +5,7 @@ import {
   FileText,
   Users,
   MessageSquare,
+  User,
   LogOut,
   Menu,
   X,
@@ -74,14 +75,15 @@ const OwnerSidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
 
   const navItems = [
     { id: 1, text: "My Ads", icon: LayoutGrid, path: "/dashboard-owner" },
-    { id: 2, text: "Beautiful Models", icon: FileText, path: "/dashboard-owner/beautiful-models" }, 
+    { id: 2, text: "Beautiful Models", icon: FileText, path: "/dashboard-owner/beautiful-models" },
     { id: 3, text: "Tenant Directory", icon: Users, path: "/dashboard-owner/tenants-directory" },
-    { id: 4, text: "Profile", icon: MessageSquare, path: "/dashboard-owner/profile" },
+    { id: 4, text: "Messages", icon: MessageSquare, path: "/dashboard-owner/messages" },
+    { id: 5, text: "Profile", icon: User, path: "/dashboard-owner/profile" },
   ];
 
   const bottomItems = [
-    { id: 5, text: "Go to website", icon: WebhookIcon, path: "/" },
-    { id: 6, text: "Logout", icon: LogOut, path: "" },
+    { id: 6, text: "Go to website", icon: WebhookIcon, path: "/" },
+    { id: 7, text: "Logout", icon: LogOut, path: "" },
   ];
 
   const handleTabClick = (path: string, text: string) => {

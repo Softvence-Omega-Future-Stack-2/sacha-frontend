@@ -2,9 +2,9 @@ import { useState, useMemo } from "react";
 import Header from "../../components/Apartments/Header";
 import SeachComponents from "../../components/Apartments/SearchComponents";
 import ApartmentCard from "../../components/Apartments/Card";
-
 import { useSearchParams } from "react-router-dom";
 import { useGetPublicAdsQuery } from "../../redux/featuresAPI/owner/owner.api";
+import { useGetFavoritesQuery } from "../../redux/featuresAPI/favourite/favoritesApi";
 
 const ApartmentSkeleton = () => (
   <div className="relative top-5 bg-[#FBFBFB] p-2 rounded-xl border border-gray-100 animate-pulse">
@@ -27,48 +27,77 @@ const App = () => {
   const [visibleCount, setVisibleCount] = useState(9);
   const [searchParams] = useSearchParams();
 
-  const propertyType = searchParams.get("property_type") || "";
-  const location = searchParams.get("location") || "";
-  const priceRange = searchParams.get("price_range") || "";
-
-  // Parse price range
-  const priceParams = useMemo(() => {
-    if (!priceRange || priceRange === "Any price") return {};
-    if (priceRange.startsWith("Over")) {
-      return { min_rent: priceRange.replace(/[^0-9]/g, "") };
+  const queryParams = useMemo(() => {
+    const params: any = {};
+    const propertyType = searchParams.get("property_type");
+    const location = searchParams.get("location");
+    const rentalType = searchParams.get("rental_type");
+    const priceRange = searchParams.get("price_range");
+    
+    if (propertyType) params.property_type = propertyType;
+    if (location) params.city = location;
+    if (rentalType) params.rental_type = rentalType;
+    
+    if (priceRange) {
+      if (priceRange.startsWith("Over")) {
+        params.min_rent = parseInt(priceRange.replace(/[^0-9]/g, ""));
+      } else {
+        const match = priceRange.match(/€([\d,]+) - €([\d,]+)/);
+        if (match) {
+          params.min_rent = parseInt(match[1].replace(/,/g, ""));
+          params.max_rent = parseInt(match[2].replace(/,/g, ""));
+        }
+      }
     }
-    const match = priceRange.match(/€([\d,]+) - €([\d,]+)/);
-    if (match) {
-      return {
-        min_rent: match[1].replace(/,/g, ""),
-        max_rent: match[2].replace(/,/g, ""),
-      };
-    }
-    return {};
-  }, [priceRange]);
-
-  const { data, isLoading, isError } = useGetPublicAdsQuery({
-    property_type: propertyType.toLowerCase(),
-    city: location,
-    ...priceParams,
-  });
+    
+    // Always return params object, even if empty
+    return params;
+  }, [searchParams]);
+  
+  const { data, isLoading, isError } = useGetPublicAdsQuery(queryParams);
+  const { data: favoritesData } = useGetFavoritesQuery({});
 
   const apartments = useMemo(() => {
     if (!data) return [];
-    return data.map((ad: any) => ({
+    
+    // Handle both array and object responses
+    const adsArray = Array.isArray(data) ? data : (data.results || []);
+    
+    let filtered = [...adsArray];
+    const rooms = searchParams.get("rooms");
+    
+    if (rooms) {
+      const minRooms = parseInt(rooms.replace("+", ""));
+      filtered = filtered.filter((ad: any) => ad.rooms >= minRooms);
+    }
+
+    const favoritesMap = new Map();
+    if (favoritesData?.favorites) {
+      favoritesData.favorites.forEach((fav: any) => {
+        favoritesMap.set(fav.ad, fav.id);
+      });
+    } else if (favoritesData?.results) {
+      favoritesData.results.forEach((fav: any) => {
+        const adId = fav.ad || fav.property_details?.id;
+        if (adId) favoritesMap.set(adId, fav.id);
+      });
+    }
+
+    return filtered.map((ad: any) => ({
       id: ad.id,
-      imageUrl: ad.images?.find((img: any) => img.is_primary)?.image || ad.images?.[0]?.image,
-      price: `€${parseFloat(ad.rent).toLocaleString()}`,
+      imageUrl: ad.images?.find((img: any) => img.is_primary)?.image || ad.images?.[0]?.image || '',
+      price: `€${(ad.rent || 0).toLocaleString()}`,
       frequency: "/month CC",
-      title: ad.title,
-      location: `${ad.city}, ${ad.postal_code}`,
+      title: ad.title || 'Untitled Property',
+      location: `${ad.city || ''}, ${ad.postal_code || ''}`.replace(/^,\s*|,\s*$/g, ''),
       details: {
-        furniture: ad.furnished,
-        rooms: ad.rooms.toString(),
-        area: `${ad.surface_sqm} m2`,
+        furniture: ad.rental_type === "furnished" || ad.furnished === true,
+        rooms: (ad.rooms || 0).toString(),
+        area: `${ad.surface_sqm || 0} m²`,
       },
+      favoriteId: favoritesMap.get(ad.id),
     }));
-  }, [data]);
+  }, [data, favoritesData, searchParams]);
 
   const handleShowMore = () => {
     setVisibleCount(apartments.length);
@@ -101,7 +130,11 @@ const App = () => {
         ) : (
           <div className="grid gap-6 md:grid-cols-2 relative -top-15 lg:grid-cols-3">
             {apartments.slice(0, visibleCount).map((apartment: any) => (
-              <ApartmentCard key={apartment.id} apartment={apartment} />
+              <ApartmentCard 
+                key={apartment.id} 
+                apartment={apartment} 
+                favoriteId={apartment.favoriteId} 
+              />
             ))}
           </div>
         )}
