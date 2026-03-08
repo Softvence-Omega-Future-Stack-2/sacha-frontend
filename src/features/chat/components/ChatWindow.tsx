@@ -17,7 +17,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ activeChat, onBack }) => {
         isSending,
         handleSend,
         messagesEndRef,
-        socketStatus
+        socketStatus,
+        isConnected
     } = useChatMessages(activeChat?.id, activeChat?.name);
 
     if (!activeChat) {
@@ -34,17 +35,17 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ activeChat, onBack }) => {
         );
     }
 
-    const getStatusColor = () => {
-        switch (socketStatus) {
+    const getStatusColor = (status: string) => {
+        switch (status) {
             case 'OPEN': return 'bg-green-500';
-            case 'CONNECTING': return 'bg-yellow-500 animate-pulse';
+            case 'CONNECTING': return 'bg-yellow-500';
             case 'ERROR': return 'bg-red-500';
             default: return 'bg-gray-400';
         }
     };
 
-    const getStatusText = () => {
-        switch (socketStatus) {
+    const getStatusText = (status: string) => {
+        switch (status) {
             case 'OPEN': return activeChat.online ? 'Online now' : 'Connected';
             case 'CONNECTING': return 'Connecting...';
             case 'ERROR': return 'Connection Error';
@@ -72,13 +73,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ activeChat, onBack }) => {
                         {activeChat.online && <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white shadow-sm" />}
                     </div>
                     <div>
-                        <div className="flex items-center gap-2">
-                            <h2 className="text-sm font-bold text-gray-900 leading-tight">{activeChat.name}</h2>
-                            <div className={`w-2 h-2 rounded-full ${getStatusColor()}`} />
+                        <div className="flex items-center gap-1.5 px-2 py-1 bg-white/50 backdrop-blur-sm rounded-full border border-gray-100 shadow-sm">
+                            <div className={`w-2 h-2 rounded-full ${getStatusColor(socketStatus)} ${isConnected ? '' : 'animate-pulse'}`} />
+                            <span className="text-[10px] font-bold tracking-wider text-gray-500 uppercase">
+                                {isConnected ? 'Connected' : getStatusText(socketStatus)}
+                            </span>
                         </div>
-                        <span className="text-[10px] font-medium text-gray-400 uppercase tracking-tighter">
-                            {getStatusText()}
-                        </span>
                     </div>
                 </div>
             </div>

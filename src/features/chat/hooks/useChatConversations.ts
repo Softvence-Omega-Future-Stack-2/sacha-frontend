@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useGetConversationsQuery } from '../api/chat.api';
+import { useAppSelector } from '../../../redux/hooks';
 import { format } from 'date-fns';
 
 export interface Chat {
@@ -32,21 +33,36 @@ export const useChatConversations = () => {
         }
     }, [apiConversations, activeChatId]);
 
+    const user = useAppSelector((state: any) => state.auth.user);
+
     const chats: Chat[] = useMemo(() => {
-        return apiConversations.map((conv: any) => {
+        const mappedChats = apiConversations.map((conv: any) => {
             const lastMsg = conv.last_message;
-            const lastMsgText = lastMsg ? (lastMsg.message || lastMsg.content || lastMsg.text || 'No messages yet') : 'No messages yet';
+            let lastMsgText = lastMsg?.text || 'No messages yet';
+
+            // Add "You: " prefix if the current user is the sender
+            if (lastMsg && user && lastMsg.sender === user.id) {
+                lastMsgText = `You: ${lastMsgText}`;
+            }
 
             return {
                 id: conv.id,
                 name: conv.other_user?.full_name || conv.other_user?.email || `Chat ${conv.id}`,
-                avatar: conv.other_user?.dp_image || conv.other_user?.profile_picture || '👤',
+                avatar: conv.other_user?.profile_picture || conv.other_user?.dp_image || '👤',
                 message: lastMsgText,
-                time: lastMsg?.created_at ? format(new Date(lastMsg.created_at), 'hh:mm a') : '',
+                time: lastMsg?.timestamp ? format(new Date(lastMsg.timestamp), 'hh:mm a') : '',
                 online: false,
+                rawTime: lastMsg?.timestamp,
             };
         });
-    }, [apiConversations]);
+
+        // Sort by recency (newest first)
+        return [...mappedChats].sort((a, b) => {
+            if (!a.rawTime) return 1;
+            if (!b.rawTime) return -1;
+            return new Date(b.rawTime).getTime() - new Date(a.rawTime).getTime();
+        });
+    }, [apiConversations, user]);
 
     const filteredChats = useMemo(() => {
         return chats.filter(chat =>

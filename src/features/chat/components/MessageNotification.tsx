@@ -21,9 +21,9 @@ const MessageNotification = () => {
             const lastMsg = latestConv.last_message;
 
             if (lastMsg && lastMsg.id !== lastMessageId) {
-                const senderVal = lastMsg.sender_id || lastMsg.sender;
-                // If the message is NOT from the current user (checks ID and Email)
-                if (String(senderVal) !== String(user?.id) && String(senderVal) !== String(user?.email)) {
+                const senderVal = lastMsg.sender;
+                // If the message is NOT from the current user (checks ID)
+                if (Number(senderVal) !== user?.id) {
                     // Only notify if we already have a previous message ID (avoids initial load notification)
                     if (lastMessageId !== null) {
                         toast.custom((t) => (
@@ -56,7 +56,7 @@ const MessageNotification = () => {
                                                 </span>
                                             </div>
                                             <p className="mt-1 text-sm font-medium text-gray-600 line-clamp-2 leading-relaxed italic">
-                                                "{lastMsg.message || lastMsg.content || lastMsg.text || ''}"
+                                                "{lastMsg.text || ''}"
                                             </p>
                                             <div className="mt-3 flex items-center gap-3">
                                                 <button

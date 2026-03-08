@@ -17,31 +17,25 @@ export const useChatMessages = (activeChatId: string | number | undefined, chatP
     const user = useAppSelector(selectUser);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    const { messages: rawMessages, sendMessage, socketStatus } = useChatSocket(activeChatId?.toString());
+    const { messages: rawMessages, sendMessage, socketStatus, isConnected } = useChatSocket(activeChatId?.toString());
 
-    const messagesArray = Array.isArray(rawMessages) ? rawMessages : (rawMessages as any).results || (rawMessages as any).data || [];
+    const messagesArray = Array.isArray(rawMessages) ? rawMessages : [];
 
     const formattedMessages: FormattedMessage[] = messagesArray.map((msg: Message) => {
-        const senderVal = msg.sender_id || msg.sender;
-        const isMine = String(senderVal) === String(user?.id) || String(senderVal) === String(user?.email);
-        const text = msg.message || msg.content || msg.text || '';
-
+        const isMine = msg.sender === user?.id;
+        const senderName = isMine ? 'You' : (msg.sender_info?.full_name || msg.sender_info?.email || chatPartnerName || 'User');
+        
         let formattedTime = '';
         try {
-            const dateStr = msg.created_at || msg.timestamp;
-            if (dateStr) {
-                formattedTime = format(new Date(dateStr), 'hh:mm a');
-            } else {
-                formattedTime = format(new Date(), 'hh:mm a');
-            }
+            formattedTime = format(new Date(msg.timestamp), 'hh:mm a');
         } catch (e) {
             formattedTime = format(new Date(), 'hh:mm a');
         }
 
         return {
-            id: Number(msg.message_id || msg.id) || Date.now(),
-            sender: isMine ? 'You' : chatPartnerName || 'User',
-            text: text,
+            id: msg.id,
+            sender: senderName,
+            text: msg.text,
             time: formattedTime,
             isMine,
         };
@@ -67,11 +61,12 @@ export const useChatMessages = (activeChatId: string | number | undefined, chatP
 
     return {
         messages: formattedMessages,
-        isLoading: false, // Handled within hook or by data availability
+        isLoading: false,
         isSending: false,
         handleSend,
         messagesEndRef,
         scrollToBottom,
         socketStatus,
+        isConnected,
     };
 };

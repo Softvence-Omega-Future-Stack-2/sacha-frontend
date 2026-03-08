@@ -24,15 +24,15 @@ export const chatApi = baseAPI.injectEndpoints({
             }),
             invalidatesTags: [{ type: "Conversations" as any, id: "LIST" }],
         }),
-        getMessages: builder.query<Message[] | { results: Message[] }, string>({
-            query: (roomId) => `/chat/conversations/${roomId}/messages/`,
-            transformResponse: (response: any) => {
+        getMessages: builder.query<Message[], string>({
+            query: (roomId) => `/chat/messages/${roomId}/`,
+            transformResponse: (response: any, _meta, roomId) => {
                 const messages = Array.isArray(response) ? response : response.results || response.data || [];
-                console.log(`[ChatApi] Fetched ${messages.length} messages for room ${response.roomId || 'unknown'}`);
+                console.log(`[ChatApi] Fetched ${messages.length} messages for room ${roomId}`);
                 return messages;
             },
             providesTags: (result, _error, roomId) =>
-                Array.isArray(result)
+                result
                     ? [
                         ...result.map(({ id }) => ({ type: "Messages" as any, id })),
                         { type: "Messages" as any, id: roomId },

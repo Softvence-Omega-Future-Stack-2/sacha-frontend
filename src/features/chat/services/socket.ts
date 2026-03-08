@@ -20,7 +20,6 @@ export const connectSocket = (roomId: string, token: string): SocketStub => {
         return getSocket()!;
     }
 
-    // Confirmed correct pattern: ws/chat/ROOM_ID/
     const url = `wss://helloapart.duckdns.org/ws/chat/${roomId}/?token=${token}`;
     console.log(`[ChatSocket] Connecting to: ${url.split('?')[0]}`);
 
@@ -28,8 +27,7 @@ export const connectSocket = (roomId: string, token: string): SocketStub => {
 
     nativeWs.onopen = () => {
         console.log(`[ChatSocket] Connected successfully`);
-        connectionAttempt = 0; // Reset on success
-        // Flush queue
+        connectionAttempt = 0;
         while (messageQueue.length > 0) {
             const msg = messageQueue.shift();
             nativeWs?.send(JSON.stringify(msg));
@@ -51,7 +49,6 @@ export const connectSocket = (roomId: string, token: string): SocketStub => {
         console.log(`[ChatSocket] Disconnected (${e.code}). Attempt: ${connectionAttempt + 1}`);
         eventHandlers['disconnect']?.forEach(cb => cb(e.reason));
 
-        // Auto-reconnect with exponential backoff on failure
         if (e.code !== 1000 && currentRoomId && currentToken) {
             connectionAttempt++;
             const delay = Math.min(1000 * Math.pow(2, Math.min(connectionAttempt - 1, 5)), 10000);
@@ -79,6 +76,7 @@ export const getSocket = (): SocketStub | null => {
         },
         emit: (_event: string, payload: any) => {
             if (nativeWs?.readyState === WebSocket.OPEN) {
+                console.log('[ChatSocket] Sending:', payload);
                 nativeWs.send(JSON.stringify(payload));
             } else {
                 console.log('[ChatSocket] Socket not ready, queuing message');

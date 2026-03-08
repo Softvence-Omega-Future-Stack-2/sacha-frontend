@@ -1,14 +1,16 @@
 export interface Message {
-    id: number | string;
-    message_id?: number | string;
-    message?: string;
-    content?: string;
-    text?: string;
-    sender?: number | string;
-    sender_id?: number | string;
-    created_at?: string;
-    timestamp?: string;
-    room_id?: string | number;
+    id: number;
+    conversation: number;
+    sender: number;
+    sender_info: {
+        id: number;
+        email: string;
+        profile_picture?: string | null;
+        full_name?: string | null;
+    };
+    text: string;
+    timestamp: string;
+    is_read: boolean;
 }
 
 export interface Conversation {
