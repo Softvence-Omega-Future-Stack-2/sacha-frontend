@@ -9,7 +9,7 @@ const professionalSituations = [
   { label: "Software Engineer", value: "software_engineer" },
   { label: "Full Stack Developer", value: "full_stack_developer" },
   { label: "Data Scientist", value: "data_scientist" },
-  { label: "Devops Engineer", value: "devops_engineer" },
+  { label: "DevOps Engineer", value: "devops_engineer" },
   { label: "Doctor", value: "doctor" },
   { label: "Nurse", value: "nurse" },
   { label: "Pharmacist", value: "pharmacist" },
@@ -25,6 +25,16 @@ const professionalSituations = [
   { label: "Civil Engineer", value: "civil_engineer" },
   { label: "Mechanical Engineer", value: "mechanical_engineer" },
   { label: "Electrical Engineer", value: "electrical_engineer" },
+  { label: "Government Officer", value: "government_officer" },
+  { label: "Police", value: "police" },
+  { label: "Military", value: "military" },
+  { label: "Designer", value: "designer" },
+  { label: "Writer", value: "writer" },
+  { label: "Content Creator", value: "content_creator" },
+  { label: "Photographer", value: "photographer" },
+  { label: "Student", value: "student" },
+  { label: "Freelancer", value: "freelancer" },
+  { label: "Unemployed", value: "unemployed" },
 ] as const;
 
 // Phone flags with dial codes

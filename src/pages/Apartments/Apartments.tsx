@@ -27,45 +27,55 @@ const App = () => {
   const [visibleCount, setVisibleCount] = useState(9);
   const [searchParams] = useSearchParams();
 
-  const queryParams = useMemo(() => {
-    const params: any = {};
-    const propertyType = searchParams.get("property_type");
-    const location = searchParams.get("location");
-    const rentalType = searchParams.get("rental_type");
-    const priceRange = searchParams.get("price_range");
-    
-    if (propertyType) params.property_type = propertyType;
-    if (location) params.city = location;
-    if (rentalType) params.rental_type = rentalType;
-    
-    if (priceRange) {
-      if (priceRange.startsWith("Over")) {
-        params.min_rent = parseInt(priceRange.replace(/[^0-9]/g, ""));
-      } else {
-        const match = priceRange.match(/€([\d,]+) - €([\d,]+)/);
-        if (match) {
-          params.min_rent = parseInt(match[1].replace(/,/g, ""));
-          params.max_rent = parseInt(match[2].replace(/,/g, ""));
-        }
-      }
-    }
-    
-    // Always return params object, even if empty
-    return params;
-  }, [searchParams]);
-  
-  const { data, isLoading, isError } = useGetPublicAdsQuery(queryParams);
+  const { data, isLoading, isError } = useGetPublicAdsQuery({});
   const { data: favoritesData } = useGetFavoritesQuery({});
 
   const apartments = useMemo(() => {
     if (!data) return [];
-    
+
     // Handle both array and object responses
     const adsArray = Array.isArray(data) ? data : (data.results || []);
-    
+
     let filtered = [...adsArray];
+
+    // Frontend Filtering Logic
+    const propertyType = searchParams.get("property_type");
+    const location = searchParams.get("location")?.toLowerCase();
+    const rentalType = searchParams.get("rental_type")?.toLowerCase();
+    const priceRange = searchParams.get("price_range");
     const rooms = searchParams.get("rooms");
-    
+
+    if (propertyType) {
+      filtered = filtered.filter((ad: any) => ad.property_type === propertyType || ad.ad_type === propertyType);
+    }
+
+    if (location) {
+      filtered = filtered.filter((ad: any) =>
+        ad.city?.toLowerCase().includes(location) ||
+        ad.address?.toLowerCase().includes(location) ||
+        ad.postal_code?.toLowerCase().includes(location)
+      );
+    }
+
+    if (rentalType) {
+      filtered = filtered.filter((ad: any) => ad.rental_type?.toLowerCase() === rentalType);
+    }
+
+    if (priceRange) {
+      let min = 0;
+      let max = Infinity;
+      if (priceRange.startsWith("Over")) {
+        min = parseInt(priceRange.replace(/[^0-9]/g, ""));
+      } else {
+        const match = priceRange.match(/€([\d,]+) - €([\d,]+)/);
+        if (match) {
+          min = parseInt(match[1].replace(/,/g, ""));
+          max = parseInt(match[2].replace(/,/g, ""));
+        }
+      }
+      filtered = filtered.filter((ad: any) => ad.rent >= min && ad.rent <= max);
+    }
+
     if (rooms) {
       const minRooms = parseInt(rooms.replace("+", ""));
       filtered = filtered.filter((ad: any) => ad.rooms >= minRooms);
@@ -130,10 +140,10 @@ const App = () => {
         ) : (
           <div className="grid gap-6 md:grid-cols-2 relative -top-15 lg:grid-cols-3">
             {apartments.slice(0, visibleCount).map((apartment: any) => (
-              <ApartmentCard 
-                key={apartment.id} 
-                apartment={apartment} 
-                favoriteId={apartment.favoriteId} 
+              <ApartmentCard
+                key={apartment.id}
+                apartment={apartment}
+                favoriteId={apartment.favoriteId}
               />
             ))}
           </div>

@@ -6,7 +6,6 @@ import {
   useGetTenantProofsQuery,
   useAddTenantProofMutation,
   useUpdateTenantProofMutation,
-  useDeleteTenantProofMutation,
   type ITenantProof,
 } from '../../../../redux/featuresAPI/tenantProofApi/tenantProofApi';
 // Recommended for Next.js
@@ -201,20 +200,6 @@ export default function DossierFacilePage() {
     }
   };
 
-  const [deleteProof, { isLoading: isDeletingAll }] = useDeleteTenantProofMutation();
-
-  const handleDeleteAll = async () => {
-    if (!existingProof) return;
-    if (!window.confirm("Are you sure you want to delete all uploaded documents?")) return;
-
-    try {
-      await deleteProof(existingProof.id).unwrap();
-      toast.success("All documents deleted.");
-      setSelectedFiles({});
-    } catch (err: any) {
-      toast.error(err?.data?.message || "Failed to delete documents.");
-    }
-  };
 
   if (isFetching) {
     return (
@@ -270,16 +255,7 @@ export default function DossierFacilePage() {
                 <Info className="w-5 h-5 text-gray-400" />
               </div>
 
-              {existingProof && (
-                <button
-                  onClick={handleDeleteAll}
-                  disabled={isDeletingAll}
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50"
-                >
-                  {isDeletingAll ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
-                  Delete All Documents
-                </button>
-              )}
+
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">

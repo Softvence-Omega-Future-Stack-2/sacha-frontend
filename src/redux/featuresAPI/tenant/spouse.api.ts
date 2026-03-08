@@ -11,6 +11,13 @@ export interface SpouseRequest {
 
 export const spouseApi = baseAPI.injectEndpoints({
     endpoints: (build) => ({
+        getTenantSpouses: build.query<any, number | void>({
+            query: (user_id) => ({
+                url: user_id ? `/tenant/spouse/?user_id=${user_id}` : "/tenant/spouse/",
+                method: "GET",
+            }),
+            providesTags: ["TenantProfile"],
+        }),
         addTenantSpouse: build.mutation({
             query: (data: FormData) => ({
                 url: "/tenant/spouse/",
@@ -22,4 +29,4 @@ export const spouseApi = baseAPI.injectEndpoints({
     }),
 });
 
-export const { useAddTenantSpouseMutation } = spouseApi;
+export const { useAddTenantSpouseMutation, useGetTenantSpousesQuery } = spouseApi;

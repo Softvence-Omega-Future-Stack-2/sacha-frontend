@@ -8,17 +8,37 @@ type GuaranteeType = "person" | "organization" | "legal";
 
 // পেশাগত পরিস্থিতি অপশন
 const professionalSituations = [
-  "Select professional situation",
-  "Employee (Permanent Contract - CDI)",
-  "Employee (Fixed-Term Contract - CDD)",
-  "Student (Domestic)",
-  "Student (International)",
-  "Self-Employed / Freelancer",
-  "Entrepreneur / Business Owner",
-  "Retired",
-  "Unemployed / Seeking Employment",
-  "Civil Servant / Public Sector",
-];
+  { label: "Select professional situation", value: "" },
+  { label: "Software Engineer", value: "software_engineer" },
+  { label: "Full Stack Developer", value: "full_stack_developer" },
+  { label: "Data Scientist", value: "data_scientist" },
+  { label: "DevOps Engineer", value: "devops_engineer" },
+  { label: "Doctor", value: "doctor" },
+  { label: "Nurse", value: "nurse" },
+  { label: "Pharmacist", value: "pharmacist" },
+  { label: "Surgeon", value: "surgeon" },
+  { label: "Teacher", value: "teacher" },
+  { label: "Professor", value: "professor" },
+  { label: "Lecturer", value: "lecturer" },
+  { label: "Researcher", value: "researcher" },
+  { label: "Entrepreneur", value: "entrepreneur" },
+  { label: "Accountant", value: "accountant" },
+  { label: "Marketing Manager", value: "marketing_manager" },
+  { label: "Sales Executive", value: "sales_executive" },
+  { label: "Civil Engineer", value: "civil_engineer" },
+  { label: "Mechanical Engineer", value: "mechanical_engineer" },
+  { label: "Electrical Engineer", value: "electrical_engineer" },
+  { label: "Government Officer", value: "government_officer" },
+  { label: "Police", value: "police" },
+  { label: "Military", value: "military" },
+  { label: "Designer", value: "designer" },
+  { label: "Writer", value: "writer" },
+  { label: "Content Creator", value: "content_creator" },
+  { label: "Photographer", value: "photographer" },
+  { label: "Student", value: "student" },
+  { label: "Freelancer", value: "freelancer" },
+  { label: "Unemployed", value: "unemployed" },
+] as const;
 
 // ফ্লাগ অপশন
 const phoneFlags = [
@@ -138,7 +158,7 @@ export default function GuaranteeForm() {
   const [loading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [addGuarantee] = useAddGuaranteeMutation();
-  const { data: guaranteeData } = useGetGuaranteesQuery({});
+  const { data: guaranteeData } = useGetGuaranteesQuery();
 
   const hasGuarantee = guaranteeData?.tenant_guarantee && guaranteeData.tenant_guarantee.length > 0;
 
@@ -177,7 +197,7 @@ export default function GuaranteeForm() {
     setLoading(true);
     try {
       const data = new FormData();
-      
+
       // Always append guarantee_type
       if (type === "person") {
         data.append("guarantee_type", "A natural person");
@@ -200,7 +220,7 @@ export default function GuaranteeForm() {
       const result = await addGuarantee(data).unwrap();
       toast.success(result.message || "Guarantee added successfully!");
       setShowToast(true);
-      
+
       // Reset form
       setFormData({
         firstName: "",
@@ -408,16 +428,16 @@ export default function GuaranteeForm() {
                     backgroundSize: "1em",
                   }}
                 >
-                  {professionalSituations.map((situation, index) => (
+                  {professionalSituations.map((opt) => (
                     <option
-                      key={index}
-                      value={situation}
-                      disabled={index === 0}
+                      key={opt.value}
+                      value={opt.value}
+                      disabled={opt.value === ""}
                       // Styling the option's text color based on if it's the placeholder
-                      className={`${index === 0 ? "text-gray-400" : "text-gray-900"
+                      className={`${opt.value === "" ? "text-gray-400" : "text-gray-900"
                         }`}
                     >
-                      {situation}
+                      {opt.label}
                     </option>
                   ))}
                 </select>

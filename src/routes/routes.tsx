@@ -185,10 +185,6 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      // {
-      //   index: true,
-      //   element: <OverviewDashboard />,
-      // },
       {
         index: true,
         element: <MyFiles />,

@@ -14,9 +14,9 @@ export interface ITenantProof {
 
 export const tenantProofApi = baseAPI.injectEndpoints({
     endpoints: (build) => ({
-        getTenantProofs: build.query<ITenantProof[], void>({
-            query: () => ({
-                url: "/tenant/proof/",
+        getTenantProofs: build.query<ITenantProof[], number | void>({
+            query: (user_id) => ({
+                url: user_id ? `/tenant/proof/?user_id=${user_id}` : "/tenant/proof/",
                 method: "GET",
             }),
             transformResponse: (response: any) => {

@@ -2,9 +2,9 @@ import { baseAPI } from "../../baseAPI/baseApi";
 
 export const guaranteeApi = baseAPI.injectEndpoints({
     endpoints: (build) => ({
-        getGuarantees: build.query({
-            query: () => ({
-                url: "/tenant/guarantee/",
+        getGuarantees: build.query<any, number | void>({
+            query: (user_id) => ({
+                url: user_id ? `/tenant/guarantee/?user_id=${user_id}` : "/tenant/guarantee/",
                 method: "GET",
             }),
             providesTags: ["Guarantees"],

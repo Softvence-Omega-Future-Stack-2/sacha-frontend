@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { ChevronDown, Edit, Pen, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useGetMeQuery, useUpdateMeMutation } from "../../../../redux/featuresAPI/auth/auth.api";
+import { useGetTenantFileQuery, useCreateTenantFileMutation } from "../../../../redux/featuresAPI/tenantProfileApi/tenantProfileApi";
 import userProfile from "../../../../assets/dashboard/topBarWomanImg.jpg";
 import TitleItaic from "../TitleItalic";
 
@@ -16,16 +17,38 @@ const countries = [
   { code: "+33", flag: "fr", name: "France" },
 ];
 
-const professions = [
-  "Employed",
-  "Self-Employed",
-  "Freelancer",
-  "Business Owner",
-  "Student",
-  "Unemployed",
-  "Retired",
-  "Looking for opportunities",
-];
+const professionalSituations = [
+  { label: "Select professional situation", value: "" },
+  { label: "Software Engineer", value: "software_engineer" },
+  { label: "Full Stack Developer", value: "full_stack_developer" },
+  { label: "Data Scientist", value: "data_scientist" },
+  { label: "DevOps Engineer", value: "devops_engineer" },
+  { label: "Doctor", value: "doctor" },
+  { label: "Nurse", value: "nurse" },
+  { label: "Pharmacist", value: "pharmacist" },
+  { label: "Surgeon", value: "surgeon" },
+  { label: "Teacher", value: "teacher" },
+  { label: "Professor", value: "professor" },
+  { label: "Lecturer", value: "lecturer" },
+  { label: "Researcher", value: "researcher" },
+  { label: "Entrepreneur", value: "entrepreneur" },
+  { label: "Accountant", value: "accountant" },
+  { label: "Marketing Manager", value: "marketing_manager" },
+  { label: "Sales Executive", value: "sales_executive" },
+  { label: "Civil Engineer", value: "civil_engineer" },
+  { label: "Mechanical Engineer", value: "mechanical_engineer" },
+  { label: "Electrical Engineer", value: "electrical_engineer" },
+  { label: "Government Officer", value: "government_officer" },
+  { label: "Police", value: "police" },
+  { label: "Military", value: "military" },
+  { label: "Designer", value: "designer" },
+  { label: "Writer", value: "writer" },
+  { label: "Content Creator", value: "content_creator" },
+  { label: "Photographer", value: "photographer" },
+  { label: "Student", value: "student" },
+  { label: "Freelancer", value: "freelancer" },
+  { label: "Unemployed", value: "unemployed" },
+] as const;
 
 const mockUser = {
   firstName: "",
@@ -76,8 +99,14 @@ const FormTextarea = ({
 );
 
 const TenantProfile: React.FC = () => {
-  const { data: profileData, isLoading: isFetching } = useGetMeQuery();
-  const [updateMe, { isLoading: isSaving }] = useUpdateMeMutation();
+  const { data: profileData, isLoading: isFetchingProfile } = useGetMeQuery();
+  const { data: fileData, isLoading: isFetchingFile } = useGetTenantFileQuery();
+  const isFetching = isFetchingProfile || isFetchingFile;
+
+  const [updateMe, { isLoading: isUpdatingProfile }] = useUpdateMeMutation();
+  const [createTenantFile, { isLoading: isUpdatingFile }] = useCreateTenantFileMutation();
+
+  const isSaving = isUpdatingProfile || isUpdatingFile;
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(mockUser);
@@ -95,22 +124,35 @@ const TenantProfile: React.FC = () => {
         ? p.phone_number.slice(foundCountry.code.length)
         : p.phone_number;
 
-      setFormData({
+      setFormData((prev: any) => ({
+        ...prev,
         firstName: p.first_name || "",
         lastName: p.last_name || "",
         email: profileData.email || "",
         phone: phoneNumber || "",
         country: foundCountry,
-        profession: p.professional_status || "",
-        netIncome: p.net_monthly_income || "",
-        about: p.about_you || "",
+        profession: p.professional_status || prev.profession,
+        netIncome: p.net_monthly_income || prev.netIncome,
+        about: p.about_you || prev.about,
         profileImage: p.dp_image || "",
         role: "tenant",
         dossierFacileUrl: p.dossier_facile_url || "",
-      });
+      }));
       setSelectedCountry(foundCountry);
     }
   }, [profileData]);
+
+  useEffect(() => {
+    if (fileData?.success && fileData?.tenant_file?.length > 0) {
+      const file = fileData.tenant_file[0];
+      setFormData((prev: any) => ({
+        ...prev,
+        profession: file.profession || prev.profession,
+        netIncome: file.net_monthly_income?.toString() || prev.netIncome,
+        about: file.about || prev.about,
+      }));
+    }
+  }, [fileData]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -122,21 +164,26 @@ const TenantProfile: React.FC = () => {
   const handleSaveAndContinue = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const data = new FormData();
-    data.append("first_name", formData.firstName);
-    data.append("last_name", formData.lastName);
-    data.append("phone_number", selectedCountry.code + formData.phone);
-    data.append("professional_status", formData.profession);
-    data.append("net_monthly_income", formData.netIncome);
-    data.append("about_you", formData.about);
-    data.append("dossier_facile_url", formData.dossierFacileUrl);
-
-    if (imageFile) {
-      data.append("dp_image", imageFile);
-    }
-
     try {
-      await updateMe(data).unwrap();
+      // 1. Update Profile (Auth)
+      const profileFormData = new FormData();
+      profileFormData.append("first_name", formData.firstName);
+      profileFormData.append("last_name", formData.lastName);
+      profileFormData.append("phone_number", selectedCountry.code + formData.phone);
+      profileFormData.append("dossier_facile_url", formData.dossierFacileUrl);
+
+      if (imageFile) {
+        profileFormData.append("dp_image", imageFile);
+      }
+      await updateMe(profileFormData).unwrap();
+
+      // 2. Create/Update Tenant File
+      const tenantFileFormData = new FormData();
+      tenantFileFormData.append("profession", formData.profession);
+      tenantFileFormData.append("net_monthly_income", formData.netIncome);
+      tenantFileFormData.append("about", formData.about);
+
+      await createTenantFile(tenantFileFormData).unwrap();
       toast.success("Profile updated successfully!", {
         style: {
           background: "#10B981",
@@ -359,7 +406,7 @@ const TenantProfile: React.FC = () => {
                 className={`text-sm ${formData.profession ? "text-gray-800" : "text-gray-400"
                   }`}
               >
-                {formData.profession || "Select your situation"}
+                {professionalSituations.find(p => p.value === formData.profession)?.label || "Select your situation"}
               </span>
               {isEditing && (
                 <ChevronDown
@@ -371,16 +418,16 @@ const TenantProfile: React.FC = () => {
 
             {isProfessionOpen && isEditing && (
               <div className="absolute top-full mt-2 left-0 right-0 bg-white border border-gray-200 rounded-xl shadow-2xl z-50 max-h-64 overflow-y-auto">
-                {professions.map((prof) => (
+                {professionalSituations.map((prof) => (
                   <div
-                    key={prof}
+                    key={prof.value}
                     onClick={() => {
-                      setFormData((prev: any) => ({ ...prev, profession: prof }));
+                      setFormData((prev: any) => ({ ...prev, profession: prof.value }));
                       setIsProfessionOpen(false);
                     }}
-                    className="px-4 py-3 hover:bg-gray-50 cursor-pointer text-sm text-gray-800 transition"
+                    className={`px-4 py-3 hover:bg-gray-50 cursor-pointer text-sm transition ${prof.value === "" ? "text-gray-400" : "text-gray-800"}`}
                   >
-                    {prof}
+                    {prof.label}
                   </div>
                 ))}
               </div>

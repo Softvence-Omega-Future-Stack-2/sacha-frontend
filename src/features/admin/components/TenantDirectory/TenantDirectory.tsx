@@ -1,14 +1,39 @@
 import { useState, useMemo, useEffect } from "react";
-import { Phone, Heart, ChevronDown, Mail, Copy, X, PhoneCall, Check } from "lucide-react";
+import { Phone, Heart, ChevronDown, Mail, Copy, X, PhoneCall, Check, MessageSquare, Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useGetDirectoryQuery } from "../../../../redux/featuresAPI/directory/directoryApi";
+import { useGetTenantProofsQuery } from "../../../../redux/featuresAPI/tenantProofApi/tenantProofApi";
+import { useGetGuaranteesQuery } from "../../../../redux/featuresAPI/tenant/guarantee.api";
+import { useGetTenantSpousesQuery } from "../../../../redux/featuresAPI/tenant/spouse.api";
+import {
+  useCreateConversationMutation,
+} from "../../../../features/chat/api/chat.api";
+import { useAppSelector } from "../../../../redux/hooks";
+import { selectUser } from "../../../../redux/featuresAPI/auth/auth.slice";
+import { toast } from "react-hot-toast";
 
 export default function TenantDirectory() {
+  const navigate = useNavigate();
+  const user = useAppSelector(selectUser);
   const { data: tenantDirectory, isLoading } = useGetDirectoryQuery(undefined);
-  console.log(tenantDirectory);
   const [selectedTenant, setSelectedTenant] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [copiedPhone, setCopiedPhone] = useState(false);
   const [copiedEmail, setCopiedEmail] = useState(false);
+
+  const { data: tenantProofs, isLoading: isProofsLoading, isError: isProofsError } = useGetTenantProofsQuery(selectedTenant?.id, {
+    skip: !selectedTenant?.id,
+  });
+
+  const { data: guaranteesData, isLoading: isGuaranteesLoading, isError: isGuaranteesError } = useGetGuaranteesQuery(selectedTenant?.id, {
+    skip: !selectedTenant?.id,
+  });
+
+  const { data: spousesData, isLoading: isSpousesLoading, isError: isSpousesError } = useGetTenantSpousesQuery(selectedTenant?.id, {
+    skip: !selectedTenant?.id,
+  });
+
+  const [createConversation, { isLoading: isCreatingChat }] = useCreateConversationMutation();
 
   // Filter States
   const [activeTab, setActiveTab] = useState<"All" | "Registered" | "Contacted">("All");
@@ -32,7 +57,7 @@ export default function TenantDirectory() {
       tab: candidate.status ? candidate.status.charAt(0).toUpperCase() + candidate.status.slice(1) : "Registered",
       situation: candidate.professional_situation || "CDI",
       fileStatus: "Complete Files",
-      phone: "+33633223580",
+      phone: candidate.phone_number,
       email: candidate.email,
       accommodation: "Apartment",
       surface: "25 m²",
@@ -49,6 +74,30 @@ export default function TenantDirectory() {
       setSelectedTenant(tenants[0]);
     }
   }, [tenants, selectedTenant]);
+
+  const handleMessageClick = async () => {
+    if (!selectedTenant?.id) {
+      toast.error("Please select a tenant first");
+      return;
+    }
+
+    const toastId = toast.loading("Creating conversation...");
+    try {
+      const response = await createConversation({ participant_id: selectedTenant.id }).unwrap();
+
+      toast.success("Conversation created!", { id: toastId });
+
+      // Determine redirect path based on user role
+      const redirectPath = user?.role === 'owner'
+        ? '/dashboard-owner/messages'
+        : '/dashboard-tenant/messages';
+
+      navigate(redirectPath, { state: { conversationId: response.id } });
+    } catch (err) {
+      console.error("Failed to create conversation:", err);
+      toast.error("Failed to initiate chat. Please try again.", { id: toastId });
+    }
+  };
 
   const filteredTenants = useMemo(() => {
     return tenants.filter((tenant: any) => {
@@ -175,66 +224,182 @@ export default function TenantDirectory() {
                       </div>
                     </div>
 
-                    <button
-                      onClick={() => setIsModalOpen(true)}
-                      className="flex items-center gap-2 px-5 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium w-full sm:w-auto justify-center"
-                    >
-                      <Phone className="w-4 h-4" />
-                      Contact
-                    </button>
+                    <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                      <button
+                        onClick={handleMessageClick}
+                        disabled={isCreatingChat}
+                        className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium w-full sm:w-auto justify-center disabled:opacity-50"
+                      >
+                        {isCreatingChat ? <Loader2 className="w-4 h-4 animate-spin" /> : <MessageSquare className="w-4 h-4" />}
+                        Message
+                      </button>
+                      <button
+                        onClick={() => setIsModalOpen(true)}
+                        className="flex items-center gap-2 px-5 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium w-full sm:w-auto justify-center"
+                      >
+                        <Phone className="w-4 h-4" />
+                        Contact
+                      </button>
+                    </div>
                   </div>
 
                   <hr className="border-gray-200 mb-6" />
 
                   <div className="space-y-8">
-                    <div>
-                      <h3 className="text-lg font-medium text-gray-900 mb-4">Search criteria</h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
-                        <div><p className="text-gray-500">Type of accommodation</p><p className="font-medium text-gray-900">{selectedTenant.accommodation}</p></div>
-                        <div><p className="text-gray-500">Rental type</p><p className="font-medium text-gray-900">-</p></div>
-                        <div><p className="text-gray-500">Minimum surface area</p><p className="font-medium text-gray-900">{selectedTenant.surface}</p></div>
-                        <div><p className="text-gray-500">Maximum rent</p><p className="font-medium text-gray-900">{selectedTenant.rent}</p></div>
-                        <div><p className="text-gray-500">Number of rooms</p><p className="font-medium text-gray-900">-</p></div>
-                        <div><p className="text-gray-500">Number of pieces</p><p className="font-medium text-gray-900">-</p></div>
-                        <div><p className="text-gray-500">Move-in date</p><p className="font-medium text-gray-900">{selectedTenant.moveIn}</p></div>
-                        <div><p className="text-gray-500">Maximum security deposit</p><p className="font-medium text-gray-900">{selectedTenant.deposit}</p></div>
-                      </div>
-                    </div>
 
-                    <hr className="border-gray-200" />
-                    <div>
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">Research sectors</h3>
-                      <p className="text-sm text-gray-600">{selectedTenant.sector}</p>
-                    </div>
+
 
                     <hr className="border-gray-200" />
                     <div>
                       <h3 className="text-lg font-medium text-gray-900 mb-4">Tenant file</h3>
                       <div className="space-y-3">
-                        {["Identity document", "Proof of address", "Proof of income", "Payslip", "Proof of professional status", "Tax notice", "Additional documents"].map((doc) => (
-                          <div key={doc} className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
-                            <span className="text-sm text-gray-700">{doc}</span>
-                            <span className="px-3 py-1 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-full">
-                              {selectedTenant.fileStatus.includes("Complete") ? "Uploaded" : "No file"}
-                            </span>
+                        {isProofsLoading ? (
+                          Array(7).fill(0).map((_, i) => (
+                            <div key={i} className="flex justify-between items-center p-4 bg-gray-50 rounded-lg animate-pulse">
+                              <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+                              <div className="h-6 bg-gray-200 rounded-full w-20"></div>
+                            </div>
+                          ))
+                        ) : isProofsError ? (
+                          <div className="p-4 bg-red-50 text-red-600 rounded-lg text-sm font-medium">
+                            Failed to load tenant documents. Please try again.
                           </div>
-                        ))}
+                        ) : (
+                          (() => {
+                            const proofData = tenantProofs?.[0] || {};
+                            const documents = [
+                              { label: "Identity document", key: "identity_doc" },
+                              { label: "Proof of address", key: "proof_address" },
+                              { label: "Proof of income", key: "proof_income" },
+                              { label: "Payslip", key: "payslip" },
+                              { label: "Proof of professional status", key: "proof_profession" },
+                              { label: "Tax notice", key: "text_notice" },
+                              { label: "Additional documents", key: "additional_doc" }
+                            ];
+
+                            return documents.map((doc) => {
+                              const isUploaded = !!(proofData as Record<string, any>)[doc.key];
+                              return (
+                                <div key={doc.label} className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                                  <span className="text-sm text-gray-700">{doc.label}</span>
+                                  {isUploaded ? (
+                                    <a
+                                      href={(proofData as Record<string, any>)[doc.key]}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="px-4 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors border border-transparent rounded-full shadow-sm"
+                                    >
+                                      View File
+                                    </a>
+                                  ) : (
+                                    <span className="px-3 py-1 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-full">
+                                      No file
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            });
+                          })()
+                        )}
                       </div>
                     </div>
 
                     <hr className="border-gray-200" />
                     <div>
                       <h3 className="text-lg font-medium text-gray-900 mb-4">Guarantees</h3>
-                      <div className="p-4 bg-gray-50 rounded-lg">
-                        <p className="text-sm text-gray-600">Guarantee 1 - Body</p>
+                      <div className="space-y-4">
+                        {isGuaranteesLoading ? (
+                          Array(2).fill(0).map((_, i) => (
+                            <div key={i} className="p-4 bg-gray-50 rounded-lg animate-pulse">
+                              <div className="h-4 bg-gray-200 rounded w-1/4 mb-4"></div>
+                              <div className="space-y-3">
+                                <div className="h-3 bg-gray-200 rounded w-full"></div>
+                                <div className="h-3 bg-gray-200 rounded w-5/6"></div>
+                                <div className="h-3 bg-gray-200 rounded w-4/6"></div>
+                              </div>
+                            </div>
+                          ))
+                        ) : isGuaranteesError ? (
+                          <div className="p-4 bg-red-50 text-red-600 rounded-lg text-sm font-medium">
+                            Failed to load guarantees. Please try again.
+                          </div>
+                        ) : guaranteesData?.tenant_guarantee?.length > 0 ? (
+                          guaranteesData.tenant_guarantee.map((guarantee: any, index: number) => (
+                            <div key={guarantee.id} className="p-5 bg-gray-50 rounded-xl border border-gray-100 shadow-sm relative overflow-hidden">
+                              <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                              <h4 className="font-semibold text-gray-900 mb-4 text-base flex justify-between items-center">
+                                <span>Guarantee {index + 1} - {guarantee.guarantee_type}</span>
+                                {guarantee.organization_type && guarantee.organization_type !== "None" && (
+                                  <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+                                    {guarantee.organization_type}
+                                  </span>
+                                )}
+                              </h4>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6 text-sm">
+                                <div><p className="text-gray-500 text-xs uppercase tracking-wide mb-1">Name</p><p className="font-medium text-gray-900">{guarantee.first_name} {guarantee.last_name}</p></div>
+                                <div><p className="text-gray-500 text-xs uppercase tracking-wide mb-1">Email</p><p className="font-medium text-gray-900">{guarantee.email || "-"}</p></div>
+                                <div><p className="text-gray-500 text-xs uppercase tracking-wide mb-1">Phone</p><p className="font-medium text-gray-900">{guarantee.phone_number || "-"}</p></div>
+                                <div><p className="text-gray-500 text-xs uppercase tracking-wide mb-1">Profession</p><p className="font-medium text-gray-900 capitalize">{guarantee.professional_situation?.replace(/_/g, " ") || "-"}</p></div>
+                                <div><p className="text-gray-500 text-xs uppercase tracking-wide mb-1">Net Income</p><p className="font-medium text-gray-900">{guarantee.net_income ? `€${guarantee.net_income}` : "-"}</p></div>
+                                {guarantee.legal_entity_name && (
+                                  <div className="sm:col-span-2">
+                                    <p className="text-gray-500 text-xs uppercase tracking-wide mb-1">Legal Entity</p>
+                                    <p className="font-medium text-gray-900">
+                                      {guarantee.legal_entity_name} (Rep: {guarantee.representative_first_name} {guarantee.representative_last_name})
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="p-6 bg-gray-50 rounded-lg text-center border border-dashed border-gray-300">
+                            <p className="text-sm text-gray-500">No guarantees provided by this tenant.</p>
+                          </div>
+                        )}
                       </div>
                     </div>
 
                     <hr className="border-gray-200" />
                     <div>
                       <h3 className="text-lg font-medium text-gray-900 mb-4">Spouse</h3>
-                      <div className="p-8 bg-gray-50 rounded-lg text-center">
-                        <p className="text-sm text-gray-600">This tenant did not provide information about a spouse.</p>
+                      <div className="space-y-4">
+                        {isSpousesLoading ? (
+                          Array(1).fill(0).map((_, i) => (
+                            <div key={i} className="p-4 bg-gray-50 rounded-lg animate-pulse">
+                              <div className="h-4 bg-gray-200 rounded w-1/4 mb-4"></div>
+                              <div className="space-y-3">
+                                <div className="h-3 bg-gray-200 rounded w-full"></div>
+                                <div className="h-3 bg-gray-200 rounded w-5/6"></div>
+                                <div className="h-3 bg-gray-200 rounded w-4/6"></div>
+                              </div>
+                            </div>
+                          ))
+                        ) : isSpousesError ? (
+                          <div className="p-4 bg-red-50 text-red-600 rounded-lg text-sm font-medium">
+                            Failed to load spouse data. Please try again.
+                          </div>
+                        ) : spousesData?.tenant_spouse?.length > 0 ? (
+                          spousesData.tenant_spouse.map((spouse: any, index: number) => (
+                            <div key={spouse.id} className="p-5 bg-gray-50 rounded-xl border border-gray-100 shadow-sm relative overflow-hidden">
+                              <div className="absolute top-0 left-0 w-1 h-full bg-pink-500"></div>
+                              <h4 className="font-semibold text-gray-900 mb-4 text-base flex justify-between items-center">
+                                <span>Spouse {index + 1}</span>
+                              </h4>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6 text-sm">
+                                <div><p className="text-gray-500 text-xs uppercase tracking-wide mb-1">Name</p><p className="font-medium text-gray-900">{spouse.first_name} {spouse.last_name}</p></div>
+                                <div><p className="text-gray-500 text-xs uppercase tracking-wide mb-1">Email</p><p className="font-medium text-gray-900">{spouse.email || "-"}</p></div>
+                                <div><p className="text-gray-500 text-xs uppercase tracking-wide mb-1">Phone</p><p className="font-medium text-gray-900">{spouse.phone_number || "-"}</p></div>
+                                <div><p className="text-gray-500 text-xs uppercase tracking-wide mb-1">Profession</p><p className="font-medium text-gray-900 capitalize">{spouse.professional_situation?.replace(/_/g, " ") || "-"}</p></div>
+                                <div><p className="text-gray-500 text-xs uppercase tracking-wide mb-1">Net Income</p><p className="font-medium text-gray-900">{spouse.net_income ? `€${spouse.net_income}` : "-"}</p></div>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="p-8 bg-gray-50 rounded-lg text-center border border-dashed border-gray-300">
+                            <p className="text-sm text-gray-500">This tenant did not provide information about a spouse.</p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

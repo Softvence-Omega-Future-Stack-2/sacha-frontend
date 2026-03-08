@@ -12,6 +12,7 @@ import {
   Loader2,
   WebhookIcon,
 } from "lucide-react";
+import { useGetConversationsQuery } from "../../chat/api/chat.api";
 
 // --- Assets ---
 import logo from "../../../assets/main-logo.png";
@@ -25,12 +26,14 @@ const SidebarItem = ({
   isActive,
   onClick,
   isCollapsed,
+  badge,
 }: {
   icon: React.ElementType;
   text: string;
   isActive: boolean;
   onClick: () => void;
   isCollapsed: boolean;
+  badge?: number | boolean;
 }) => {
   const baseClasses = `relative flex items-center p-3 text-sm font-medium cursor-pointer transition-all duration-150 rounded-lg whitespace-nowrap overflow-hidden h-11`;
   const activeClasses = "bg-[#EBF5FF] text-[#006CFF] font-semibold";
@@ -50,7 +53,18 @@ const SidebarItem = ({
       )}
 
       <Icon className="w-5 h-5 shrink-0" />
-      {!isCollapsed && <span className="tracking-wide">{text}</span>}
+      {!isCollapsed && <span className="tracking-wide flex-1">{text}</span>}
+
+      {badge && (
+        <span className={`
+          ${isCollapsed ? "absolute top-1 right-1" : "ml-auto"}
+          inline-flex items-center justify-center
+          ${typeof badge === 'number' ? 'px-2 py-0.5 min-w-[20px] rounded-full text-[10px]' : 'w-2 h-2 rounded-full'}
+          bg-red-500 text-white font-bold
+        `}>
+          {typeof badge === 'number' ? (badge > 99 ? "99+" : badge) : ""}
+        </span>
+      )}
     </div>
   );
 };
@@ -68,6 +82,14 @@ const OwnerSidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
   const location = useLocation();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const { data: conversations = [] } = useGetConversationsQuery(undefined, {
+    pollingInterval: 10000,
+  });
+
+  // Calculate total unread messages - Mocking since API doesn't provide unread count yet
+  // In a real app, the API would return unread_count per conversation
+  const unreadCount = conversations.reduce((acc: number, conv: any) => acc + (conv.unread_count || 0), 0);
 
   // Logout Modal States
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
@@ -145,6 +167,7 @@ const OwnerSidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
         }
         onClick={() => handleTabClick(item.path, item.text)}
         isCollapsed={isCollapsed}
+        badge={item.text === "Messages" ? (unreadCount > 0 ? unreadCount : false) : undefined}
       />
     ));
 
@@ -204,7 +227,7 @@ const OwnerSidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
               className={`flex items-center transition-all duration-300 ${isCollapsed ? "opacity-0 w-0" : "opacity-100 w-auto"
                 }`}
             >
-              <Link to="/dashboard-owner">
+              <Link to="/">
                 <img
                   src={logo}
                   alt="Logo"

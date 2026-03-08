@@ -11,6 +11,15 @@ export const tenantProfileApi = baseAPI.injectEndpoints({
       providesTags: ["TenantProfile"],
     }),
 
+    // GET TENANT FILE
+    getTenantFile: build.query<any, void>({
+      query: () => ({
+        url: "/tenant/file/",
+        method: "GET",
+      }),
+      providesTags: ["TenantProfile"],
+    }),
+
     // UPDATE TENANT PROFILE
     updateTenantProfile: build.mutation({
       query: (data) => ({
@@ -20,8 +29,18 @@ export const tenantProfileApi = baseAPI.injectEndpoints({
       }),
       invalidatesTags: ["TenantProfile"],
     }),
+
+    // CREATE TENANT FILE
+    createTenantFile: build.mutation<any, FormData>({
+      query: (formData) => ({
+        url: "/tenant/file/",
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: ["TenantProfile"],
+    }),
   }),
 });
 
-export const { useGetTenantProfileQuery, useUpdateTenantProfileMutation } =
+export const { useGetTenantProfileQuery, useGetTenantFileQuery, useUpdateTenantProfileMutation, useCreateTenantFileMutation } =
   tenantProfileApi;

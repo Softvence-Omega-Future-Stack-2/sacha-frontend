@@ -1,5 +1,9 @@
 import arrowLeft from '../../assets/productDetails/arrow-left.svg'
 import { useNavigate } from 'react-router-dom';
+import { MessageSquare, Loader2 } from 'lucide-react';
+import { useCreateConversationMutation } from "../../features/chat/api/chat.api";
+import { useAppSelector } from '../../redux/hooks';
+import { selectUser } from '../../redux/featuresAPI/auth/auth.slice';
 
 interface HeaderProps {
   ad: any;
@@ -7,8 +11,33 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ ad }) => {
   const navigate = useNavigate();
+  const user = useAppSelector(selectUser);
+  const [createConversation, { isLoading: isCreating }] = useCreateConversationMutation();
+
   const handelBack = () => {
     navigate(-1)
+  };
+
+  const handleMessageOwner = async () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    if (!ad?.owner) return; // or ad.owner_id
+
+    try {
+      const result = await createConversation({ participant_id: ad.owner }).unwrap();
+
+      // Determine redirect path based on user role
+      const redirectPath = user.role === 'owner'
+        ? '/dashboard-owner/messages'
+        : '/dashboard-tenant/messages';
+
+      navigate(redirectPath, { state: { conversationId: result.id } });
+    } catch (error) {
+      console.error("Failed to create conversation:", error);
+    }
   };
   return (
     // Outer container with the light blue-gray background color and overall padding
@@ -43,11 +72,24 @@ const Header: React.FC<HeaderProps> = ({ ad }) => {
             </p>
           </div>
 
-          {/* Right Side: Price */}
-          <div className="flex-shrink-0">
+          {/* Right Side: Price and Message Button */}
+          <div className="flex flex-col items-end gap-4">
             <span className="text-3xl sm:text-3xl font-normal text-[#061251]">
               €{parseFloat(ad.rent).toLocaleString()}
             </span>
+
+            <button
+              onClick={handleMessageOwner}
+              disabled={isCreating}
+              className="flex items-center gap-2 px-6 py-3 bg-[#1077FF] text-white rounded-lg font-semibold hover:bg-[#006CFF] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+            >
+              {isCreating ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <MessageSquare className="w-5 h-5" />
+              )}
+              Message Owner
+            </button>
           </div>
         </div>
 

@@ -1,126 +1,43 @@
 import { Heart } from "lucide-react";
 import Title from "../Title";
 import Card from "./Card";
-import { useState } from "react";
-
-import img1 from "../../../../assets/dashboard/h1.jpg";
-import img2 from "../../../../assets/dashboard/h2.jpg";
-import img3 from "../../../../assets/dashboard/h3.jpg";
-import img4 from "../../../../assets/dashboard/h4.jpg";
-import img5 from "../../../../assets/dashboard/h5.jpg";
-import img6 from "../../../../assets/dashboard/h6.jpg";
-
-const properties = [
-  {
-    id: "1",
-    price: "585",
-    title: "Appartement moderne T3 – Marais",
-    location: "Malibu, California",
-    image: img1,
-  },
-  {
-    id: "2",
-    price: "585",
-    title: "Appartement moderne T8 – Marais",
-    location: "Malibu, California",
-    image: img2,
-  },
-  {
-    id: "3",
-    price: "855",
-    title: "Appartement moderne T3 - Marais",
-    location: "Harbor City, Sydney",
-    image: img3,
-  },
-  {
-    id: "4",
-    price: "589",
-    title: "Appartement moderne T2 – Marais",
-    location: "Malibu, California",
-    image: img4,
-  },
-  {
-    id: "5",
-    price: "581",
-    title: "Appartement moderne T13 – Marais",
-    location: "Malibu, California",
-    image: img5,
-  },
-  {
-    id: "6",
-    price: "580",
-    title: "Appartement moderne T11 – Marais",
-    location: "Manhattan, NYC",
-    image: img6,
-  },
-  {
-    id: "7",
-    price: "585",
-    title: "Appartement moderne T10 – Marais",
-    location: "Times Square, NYC",
-    image: img1,
-  },
-  {
-    id: "8",
-    price: "585",
-    title: "Appartement moderne T17 – Marais",
-    location: "Downtown, Sydney",
-    image: img2,
-  },
-  {
-    id: "9",
-    price: "585",
-    title: "Appartement moderne T18 – Marais",
-    location: "Malibu, California",
-    image: img2,
-  },
-  {
-    id: "10",
-    price: "585",
-    title: "Appartement moderne T9 – Marais",
-    location: "Malibu, California",
-    image: img4,
-  },
-  {
-    id: "11",
-    price: "585",
-    title: "Appartement moderne T5 – Marais",
-    location: "Malibu, California",
-    image: img5,
-  },
-  {
-    id: "12",
-    price: "585",
-    title: "Appartement moderne T15 – Marais",
-    location: "Malibu, California",
-    image: img6,
-  },
-  {
-    id: "13",
-    price: "585",
-    title: "Appartement moderne T17 – Marais",
-    location: "Malibu, California",
-    image: img1,
-  },
-  {
-    id: "14",
-    price: "585",
-    title: "Appartement moderne T14 – Marais",
-    location: "Malibu, California",
-    image: img2,
-  },
-];
+import { useState, useEffect } from "react";
+import { useGetPossessionsQuery } from "../../../../redux/featuresAPI/tenant/possessions.api";
 
 const ITEMS_PER_PAGE = 8;
 
-const PossessionsManager: React.FC = () => {
-  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
-  const [loading, setLoading] = useState(false);
-
-  // Start with all properties as favorite
-  const [favoriteIds, setFavoriteIds] = useState<string[]>(
-    properties.map((p) => p.id)
+const PossessionsSkeleton = () => {
+  return (
+    <div className="group p-3 relative bg-[#FBFBFB] rounded-xl overflow-hidden w-full max-w-sm mx-auto animate-pulse">
+      <div className="relative overflow-hidden rounded-lg bg-gray-200 h-64 w-full"></div>
+      <div className="space-y-4 mt-4">
+        <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+        <div className="h-6 bg-gray-200 rounded w-3/4"></div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 bg-gray-200 rounded-full"></div>
+          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+        </div>
+        <div className="w-full mt-6 h-12 bg-gray-200 rounded-2xl"></div>
+      </div>
+    </div>
   );
+};
+
+const PossessionsManager: React.FC = () => {
+  const { data, isLoading, isError, error, isFetching } = useGetPossessionsQuery();
+  const possessions = data?.possessions?.ad_details || [];
+
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
+  const [loadingMore, setLoadingMore] = useState(false);
+
+  // We initialize favoriteIds when possessions are loaded
+  const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (possessions.length > 0 && favoriteIds.length === 0) {
+      setFavoriteIds(possessions.map((p) => p.ad_details.id.toString()));
+    }
+  }, [possessions]);
 
   const toggleFavorite = (id: string) => {
     setFavoriteIds((prev) =>
@@ -128,19 +45,19 @@ const PossessionsManager: React.FC = () => {
     );
   };
 
-  const favoriteProperties = properties.filter((p) =>
-    favoriteIds.includes(p.id)
+  const favoriteProperties = possessions.filter((p) =>
+    favoriteIds.includes(p.ad_details.id.toString())
   );
   const visibleProperties = favoriteProperties.slice(0, visibleCount);
   const hasMore = visibleCount < favoriteProperties.length;
 
   const handleViewMore = () => {
-    setLoading(true);
+    setLoadingMore(true);
     setTimeout(() => {
       setVisibleCount((prev) =>
         Math.min(prev + ITEMS_PER_PAGE, favoriteProperties.length)
       );
-      setLoading(false);
+      setLoadingMore(false);
       window.scrollBy({ top: 300, behavior: "smooth" });
     }, 400);
   };
@@ -155,7 +72,20 @@ const PossessionsManager: React.FC = () => {
           />
         </header>
 
-        {favoriteProperties.length === 0 ? (
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <PossessionsSkeleton key={i} />
+            ))}
+          </div>
+        ) : isError ? (
+          <div className="text-center py-24 text-red-500">
+            <p className="text-2xl font-semibold">Failed to load possessions</p>
+            <p className="mt-2 text-gray-500">
+              {error?.toString() || "An unexpected error occurred."}
+            </p>
+          </div>
+        ) : favoriteProperties.length === 0 ? (
           <div className="text-center py-24">
             <Heart className="w-20 h-20 mx-auto text-gray-300 mb-6" />
             <p className="text-2xl font-semibold text-gray-700">
@@ -168,24 +98,29 @@ const PossessionsManager: React.FC = () => {
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {visibleProperties.map((property) => (
-                <Card
-                  key={property.id}
-                  id={property.id}
-                  price={property.price}
-                  title={property.title}
-                  location={property.location}
-                  image={property.image}
-                  isFavorite={favoriteIds.includes(property.id)}
-                  onToggleFavorite={toggleFavorite}
-                  favoriteIds={favoriteIds}
-                />
-              ))}
+              {visibleProperties.map((property) => {
+                const adDetails = property.ad_details;
+                const primaryImage = adDetails.images?.find((img) => img.is_primary)?.image || adDetails.images?.[0]?.image || "";
+
+                return (
+                  <Card
+                    key={adDetails.id}
+                    id={adDetails.id.toString()}
+                    price={adDetails.rent.toString()}
+                    title={adDetails.title}
+                    location={adDetails.city}
+                    image={primaryImage}
+                    isFavorite={favoriteIds.includes(adDetails.id.toString())}
+                    onToggleFavorite={toggleFavorite}
+                    favoriteIds={favoriteIds}
+                  />
+                );
+              })}
             </div>
 
             {hasMore && (
               <div className="flex justify-center pb-12">
-                {loading ? (
+                {loadingMore || isFetching ? (
                   <div className="py-8 text-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900 mx-auto"></div>
                     <p className="text-sm text-gray-500 mt-3">

@@ -1,8 +1,14 @@
-import { CircleUser, Menu, User, X, ChevronDown, LogOut } from "lucide-react";
+import { CircleUser, Menu, User, X, ChevronDown, LogOut, Bell, CheckCircle2 } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../../assets/main-logo.png";
+import {
+  useGetNotificationsQuery,
+  useGetUnreadCountQuery,
+  useMarkAllReadMutation,
+} from "../../redux/featuresAPI/notifications/notifications.api";
+import { format } from "date-fns";
 
 import us from "../../assets/us.png";
 import uk from "../../assets/uk.png";
@@ -22,6 +28,7 @@ const Navbar: React.FC = () => {
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [loginDropdownOpen, setLoginDropdownOpen] = useState(false);
+  const [notificationOpen, setNotificationOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   // Helper function to check if a link is active
@@ -33,6 +40,7 @@ const Navbar: React.FC = () => {
   const [selectedLang, setSelectedLang] = useState(languages[0]);
 
   const langRef = useRef<HTMLDivElement>(null);
+  const notificationRef = useRef<HTMLDivElement>(null);
 
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -45,6 +53,27 @@ const Navbar: React.FC = () => {
 
   const dashboardRoute =
     userRole === "owner" ? "/dashboard-owner" : "/dashboard-tenant";
+
+  // Notifications API
+  const { data: unreadData } = useGetUnreadCountQuery(undefined, {
+    skip: !isLoggedIn,
+    pollingInterval: 10000,
+  });
+
+  const { data: notifications = [] } = useGetNotificationsQuery(undefined, {
+    skip: !isLoggedIn || !notificationOpen,
+  });
+
+  const [markAllRead] = useMarkAllReadMutation();
+
+  const handleMarkAllRead = async () => {
+    try {
+      await markAllRead().unwrap();
+      setNotificationOpen(false);
+    } catch (err) {
+      console.error("Failed to mark all read:", err);
+    }
+  };
 
   // Current language
   useEffect(() => {
@@ -60,6 +89,9 @@ const Navbar: React.FC = () => {
     const handleClickOutside = (e: MouseEvent) => {
       if (langRef.current && !langRef.current.contains(e.target as Node)) {
         setLangOpen(false);
+      }
+      if (notificationRef.current && !notificationRef.current.contains(e.target as Node)) {
+        setNotificationOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -225,6 +257,64 @@ const Navbar: React.FC = () => {
                 )}
               </div>
 
+              {/* Notifications */}
+              {isLoggedIn && (
+                <div className="relative" ref={notificationRef}>
+                  <button
+                    onClick={() => setNotificationOpen(!notificationOpen)}
+                    className="p-2 text-[#061251] hover:bg-gray-50 rounded-full transition-colors relative"
+                  >
+                    <Bell className="w-6 h-6" />
+                    {unreadData && unreadData.count > 0 && (
+                      <span className="absolute top-1 right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
+                        {unreadData.count > 99 ? "99+" : unreadData.count}
+                      </span>
+                    )}
+                  </button>
+
+                  {notificationOpen && (
+                    <div className="absolute right-0 mt-2 w-[380px] bg-white border border-gray-200 rounded-xl shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                      <div className="px-4 py-2 border-b border-gray-100 flex items-center justify-between">
+                        <h3 className="font-semibold text-gray-900">Notifications</h3>
+                        <button
+                          onClick={handleMarkAllRead}
+                          className="text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1.5 transition-colors"
+                        >
+                          <CheckCircle2 className="w-4 h-4" />
+                          <span>Read all notifications</span>
+                        </button>
+                      </div>
+                      <div className="max-h-[400px] overflow-y-auto">
+                        {notifications.length === 0 ? (
+                          <div className="py-12 text-center">
+                            <Bell className="w-10 h-10 text-gray-200 mx-auto mb-2" />
+                            <p className="text-gray-500 text-sm">No notifications yet</p>
+                          </div>
+                        ) : (
+                          notifications.map((notif) => (
+                            <div
+                              key={notif.id}
+                              className={`px-4 py-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0 ${!notif.is_read ? 'bg-blue-50/30' : ''}`}
+                            >
+                              <div className="flex gap-3">
+                                <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${!notif.is_read ? 'bg-blue-500' : 'bg-transparent'}`} />
+                                <div className="flex-1">
+                                  <p className="text-sm font-semibold text-gray-900 line-clamp-1">{notif.title}</p>
+                                  <p className="text-sm text-gray-600 mt-0.5 line-clamp-2">{notif.message}</p>
+                                  <p className="text-xs text-gray-400 mt-1.5">
+                                    {format(new Date(notif.created_at), 'MMM dd, yyyy • hh:mm a')}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Login / Dashboard */}
               {isLoggedIn ? (
                 <div className="flex items-center gap-3">
@@ -286,7 +376,17 @@ const Navbar: React.FC = () => {
               {mobileMenuOpen ? (
                 <X className="w-6 h-6" />
               ) : (
-                <Menu className="w-6 h-6" />
+                <div className="flex items-center gap-2">
+                  {isLoggedIn && unreadData && unreadData.count > 0 && (
+                    <div className="relative mr-2">
+                      <Bell className="w-6 h-6 text-[#061251]" />
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold px-1 rounded-full min-w-[15px] text-center">
+                        {unreadData.count > 99 ? "99+" : unreadData.count}
+                      </span>
+                    </div>
+                  )}
+                  <Menu className="w-6 h-6" />
+                </div>
               )}
             </button>
           </div>
