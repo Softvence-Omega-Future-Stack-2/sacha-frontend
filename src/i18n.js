@@ -122,7 +122,7 @@ const resources = {
     translation: {
       "nav.our_apartments": "Nos appartements",
       "nav.rental_management": "Gestion locative",
-      "nav.premium": "Premium",
+      "nav.premium": "Prime",
       "nav.faq": "FAQ",
       "nav.contact": "Contact",
       "nav.dashboard": "Tableau de bord",
@@ -163,7 +163,7 @@ const resources = {
       "why_us.simplify_title_prefix": "Ce que",
       "why_us.simplify_title_suffix": "Hello Appart simplifie",
       "why_us.simplify_title_end": "pour vous",
-      "why_us.badge_protect": "LOCATION SÉCURISÉE ET SEREINE",
+      "why_us.badge_protect": "EMPLACEMENT SÉCURISÉE ET SEREINE",
       "why_us.protect_title_prefix": "Ce qui vous protège avec",
       "why_us.protect_title_suffix": "Hello Appart",
 
@@ -354,7 +354,8 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: "en",
+    lng: "fr",
+    fallbackLng: "fr",
     detection: {
       order: ['localStorage', 'navigator'],  // localStorage
       caches: ['localStorage']               //

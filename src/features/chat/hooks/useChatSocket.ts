@@ -1,104 +1,107 @@
-import { useEffect, useCallback, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { chatApi, useGetMessagesQuery } from '../api/chat.api';
-import { selectUser } from '../../../redux/featuresAPI/auth/auth.slice';
-import type { Message } from '../types';
+import { useEffect, useState, useCallback, useRef } from "react";
+import { connectSocket, getSocket } from "../services/socket";
 
-export const useChatSocket = (roomId: string | undefined, tokenParam?: string, otherUserId?: number | string) => {
-    const [socketStatus, setSocketStatus] = useState<'CONNECTING' | 'OPEN' | 'CLOSED' | 'ERROR'>('OPEN');
-    const dispatch = useAppDispatch();
-    const reduxToken = useAppSelector((state: any) => state.auth.accessToken);
-    const token = tokenParam || reduxToken;
-    const user = useAppSelector(selectUser);
+interface ChatMessage {
+    id: string;
+    sender: string;
+    message: string;
+    timestamp: string;
+    read?: boolean;
+}
+
+export const useChatSocket = (roomId: string, token: string) => {
+    const [messages, setMessages] = useState<ChatMessage[]>([]);
+    const [socketStatus, setSocketStatus] = useState<number>(WebSocket.CLOSED);
+    const queueRef = useRef<string[]>([]);
+    const reconnectRef = useRef<any>(null);
+
+    // Connect to WebSocket
+    const connect = useCallback(() => {
+        if (!roomId || !token) return;
+        const socket = connectSocket(roomId, token);
+        setSocketStatus(socket.readyState);
+
+        socket.onopen = () => {
+            console.log("[ChatSocket] Connected to room:", roomId);
+            setSocketStatus(WebSocket.OPEN);
+            // Send queued messages
+            while (queueRef.current.length > 0) {
+                const msg = queueRef.current.shift();
+                if (msg) socket.send(msg);
+            }
+        };
+
+        socket.onmessage = (event: MessageEvent) => {
+            try {
+                const data: ChatMessage = JSON.parse(event.data);
+                setMessages((prev) => [...prev, data]);
+            } catch (err) {
+                console.error("[ChatSocket] Error parsing message:", err);
+            }
+        };
+
+        socket.onclose = (event) => {
+            setSocketStatus(WebSocket.CLOSED);
+            if (!event.wasClean) {
+                console.warn("[ChatSocket] Connection lost, retrying in 3s...");
+                reconnectRef.current = setTimeout(connect, 3000);
+            }
+        };
+
+        socket.onerror = (err) => {
+            console.error("[ChatSocket] Socket error:", err);
+            setSocketStatus(WebSocket.CLOSED);
+            socket.close();
+        };
+
+        return socket;
+    }, [roomId, token]);
 
     useEffect(() => {
-        if (otherUserId) {
-            console.log(`[ChatSocket] Chatting with user: ${otherUserId}`);
-        }
-    }, [otherUserId]);
-
-    const { data: messages = [] } = useGetMessagesQuery(roomId!, {
-        skip: !roomId,
-        pollingInterval: 3000, // Poll every 3 seconds for new messages
-    });
-
-    const handleIncomingMessage = useCallback((message: Message) => {
-        if (!roomId) return;
-
-        console.log('[ChatSocket] Processing incoming message:', message);
-
-        dispatch(
-            chatApi.util.updateQueryData('getMessages', roomId, (draft) => {
-                const exists = draft.some((m: Message) => m.id === message.id);
-                if (!exists) {
-                    draft.push(message);
-                }
-            })
-        );
-
-        dispatch(
-            chatApi.util.updateQueryData('getConversations', undefined, (draft) => {
-                const convIndex = draft.findIndex((c: any) => String(c.id) === String(roomId));
-                if (convIndex !== -1) {
-                    draft[convIndex].last_message = message;
-                    const [updatedConv] = draft.splice(convIndex, 1);
-                    draft.unshift(updatedConv);
-                }
-            })
-        );
-    }, [dispatch, roomId]);
-
-    useEffect(() => {
-        if (!roomId || !token) {
-            setSocketStatus('CLOSED');
-            return;
-        }
-
-        // Skip WebSocket connection for now, just use HTTP polling
-        setSocketStatus('OPEN');
-
-        // Simulate connection for UI
-        const timer = setTimeout(() => {
-            console.log("[ChatSocket] HTTP polling mode active");
-        }, 100);
+        const socket = connect();
 
         return () => {
-            clearTimeout(timer);
+            if (reconnectRef.current) clearTimeout(reconnectRef.current);
+            socket?.close();
         };
-    }, [roomId, token, handleIncomingMessage]);
+    }, [connect]);
 
-    const sendMessage = useCallback(async (content: string) => {
-        if (!roomId || !user) {
-            console.warn("[ChatSocket] Cannot send message: missing roomId or user");
-            return;
+    // Send message
+    const sendMessage = useCallback(
+        (message: string, type: "text" | "typing" | "read" = "text") => {
+            const socket = getSocket();
+            const payload = JSON.stringify({ type, message });
+
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(payload);
+            } else {
+                console.log("[ChatSocket] Socket not open, queuing message");
+                queueRef.current.push(payload);
+                if (!socket || socket.readyState === WebSocket.CLOSED) connect();
+            }
+        },
+        [connect]
+    );
+
+    const getStatusString = () => {
+        switch (socketStatus) {
+            case WebSocket.CONNECTING:
+                return "CONNECTING";
+            case WebSocket.OPEN:
+                return "OPEN";
+            case WebSocket.CLOSING:
+                return "CLOSING";
+            case WebSocket.CLOSED:
+                return "CLOSED";
+            default:
+                return "UNKNOWN";
         }
+    };
 
-        // Create optimistic message for immediate UI update
-        const optimisticMsg: Message = {
-            id: Date.now(),
-            conversation: Number(roomId),
-            sender: user.id,
-            sender_info: {
-                id: user.id,
-                email: user.email,
-                profile_picture: null,
-                full_name: `${user.first_name} ${user.last_name}`.trim() || user.email,
-            },
-            text: content,
-            timestamp: new Date().toISOString(),
-            is_read: false,
-        };
-
-        // Add to UI immediately
-        dispatch(
-            chatApi.util.updateQueryData('getMessages', roomId, (draft) => {
-                draft.push(optimisticMsg);
-            })
-        );
-
-        // Note: No actual API call since only GET endpoints are available
-        console.log('[ChatSocket] Message added locally (no send API available):', content);
-    }, [roomId, user, dispatch]);
-
-    return { messages, sendMessage, socketStatus, isConnected: socketStatus === 'OPEN' };
+    return {
+        messages,
+        sendMessage,
+        isConnected: socketStatus === WebSocket.OPEN,
+        socketStatus: getStatusString(),
+    };
 };

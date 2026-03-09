@@ -13,6 +13,7 @@ import storage from 'redux-persist/lib/storage'
 import authReducer from './featuresAPI/auth/auth.slice'
 import { baseAPI } from './baseAPI/baseApi'
 import { notificationsApi } from './featuresAPI/notifications/notifications.api'
+import { chatApi } from '../features/chat/api/chat.api'
 
 const persistConfig = {
   key: 'auth',
@@ -25,6 +26,7 @@ export const store = configureStore({
   reducer: {
     [baseAPI.reducerPath]: baseAPI.reducer,
     [notificationsApi.reducerPath]: notificationsApi.reducer,
+    [chatApi.reducerPath]: chatApi.reducer,
     auth: persistedReducer,
   },
   middleware: getDefaultMiddleware =>
@@ -32,7 +34,7 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
       }
-    }).concat(baseAPI.middleware, notificationsApi.middleware)
+    }).concat(baseAPI.middleware, notificationsApi.middleware, chatApi.middleware)
 })
 
 export type RootState = ReturnType<typeof store.getState>

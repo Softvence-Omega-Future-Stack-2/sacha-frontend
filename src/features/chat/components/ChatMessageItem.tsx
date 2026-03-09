@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface ChatMessageItemProps {
-    id: number;
+    id: number | string;
     sender: string;
     text: string;
     time: string;

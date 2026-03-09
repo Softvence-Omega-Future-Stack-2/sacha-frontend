@@ -1,50 +1,46 @@
-import { baseAPI } from "../../../redux/baseAPI/baseApi";
-import type { Message, Conversation } from "../types";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-export const chatApi = baseAPI.injectEndpoints({
+export const chatApi = createApi({
+    reducerPath: "chatApi",
+    baseQuery: fetchBaseQuery({
+        baseUrl: "https://helloapart.duckdns.org",
+        credentials: "include",
+        prepareHeaders(headers, { getState }) {
+            const token = (getState() as any).auth.accessToken;
+            if (token) {
+                headers.set("authorization", `Bearer ${token}`);
+            }
+            return headers;
+        },
+    }),
     endpoints: (builder) => ({
-        getConversations: builder.query<Conversation[], void>({
+        getConversations: builder.query({
             query: () => "/chat/conversations/",
             transformResponse: (response: any) => {
                 return Array.isArray(response) ? response : response.results || response.data || [];
             },
-            providesTags: (result) =>
-                result
-                    ? [
-                        ...result.map(({ id }) => ({ type: "Conversations" as any, id })),
-                        { type: "Conversations" as any, id: "LIST" },
-                    ]
-                    : [{ type: "Conversations" as any, id: "LIST" }],
         }),
-        createConversation: builder.mutation<Conversation, { participant_id: number }>({
-            query: (body) => ({
+
+        createConversation: builder.mutation({
+            query: (data) => ({
                 url: "/chat/conversations/create/",
                 method: "POST",
-                body,
-            }),
-            invalidatesTags: [{ type: "Conversations" as any, id: "LIST" }],
+                body: data
+            })
         }),
-        getMessages: builder.query<Message[], string>({
-            query: (roomId) => `/chat/messages/${roomId}/`,
-            transformResponse: (response: any, _meta, roomId) => {
-                const messages = Array.isArray(response) ? response : response.results || response.data || [];
-                console.log(`[ChatApi] Fetched ${messages.length} messages for room ${roomId}`);
-                return messages;
+
+        getMessages: builder.query({
+            query: (roomId: string) => `/chat/messages/${roomId}/`,
+            transformResponse: (response: any) => {
+                return Array.isArray(response) ? response : response.results || response.data || [];
             },
-            providesTags: (result, _error, roomId) =>
-                result
-                    ? [
-                        ...result.map(({ id }) => ({ type: "Messages" as any, id })),
-                        { type: "Messages" as any, id: roomId },
-                    ]
-                    : [{ type: "Messages" as any, id: roomId }],
-        }),
-    }),
-    overrideExisting: false,
+        })
+
+    })
 });
 
 export const {
     useGetConversationsQuery,
     useCreateConversationMutation,
-    useGetMessagesQuery,
+    useGetMessagesQuery
 } = chatApi;

@@ -18,7 +18,6 @@ import Payment from "../pages/Payment/Payment";
 import PaymentSuccess from "../pages/Payment/PaymentSuccess";
 import PaymentCancel from "../pages/Payment/PaymentCancel";
 import Subscription from "../pages/Subscription/Subscription";
-import Chat from "../pages/Chat/Chat";
 import ProtectedRoute from "../components/ProtectedRoute";
 import NotFound from "../pages/NotFound/NotFound";
 import Unauthorized from "../pages/Unauthorized/Unauthorized";
@@ -90,14 +89,7 @@ const router = createBrowserRouter([
         path: "/search-result",
         element: <HomeSearchResult />,
       },
-      {
-        path: "/chat",
-        element: (
-          <ProtectedRoute allowedRoles={["owner", "tenant"]}>
-            <Chat />
-          </ProtectedRoute>
-        ),
-      },
+
       {
         path: "/subscription",
         element: <Subscription />,

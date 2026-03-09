@@ -16,10 +16,10 @@ import german from "../../assets/german.png";
 import france from "../../assets/franch.png";
 
 const languages = [
+  { code: "fr", name: "Français", flag: france },
   { code: "en-US", name: "English (US)", flag: us },
   { code: "en-GB", name: "English (UK)", flag: uk },
   { code: "de", name: "Deutsch", flag: german },
-  { code: "fr", name: "Français", flag: france },
 ];
 
 const Navbar: React.FC = () => {

@@ -8,8 +8,8 @@ export const useChatUtils = () => {
     const startConversation = async (participantId: number) => {
         try {
             const result = await createConversation({ participant_id: participantId }).unwrap();
-            navigate('/chat', { 
-                state: { conversationId: result.id } 
+            navigate('/chat', {
+                state: { conversationId: result.id }
             });
         } catch (error) {
             console.error('Failed to create conversation:', error);

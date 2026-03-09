@@ -68,7 +68,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ activeChat, onBack }) => {
 
                     <div className="relative">
                         <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-lg uppercase font-bold text-blue-600 shadow-inner">
-                            {activeChat.avatar.length > 2 ? <img src={activeChat.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : activeChat.avatar.substring(0, 1)}
+                            {activeChat.avatar.length > 2 ? <img src={activeChat.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : activeChat.name.substring(0, 1)}
                         </div>
                         {activeChat.online && <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white shadow-sm" />}
                     </div>

@@ -57,7 +57,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                             >
                                 <div className="relative flex-shrink-0">
                                     <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-xl shadow-inner uppercase font-bold text-blue-600">
-                                        {chat.avatar.length > 2 ? <img src={chat.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : chat.avatar.substring(0, 1)}
+                                        {chat.avatar.length > 2 ? <img src={chat.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : chat.name.substring(0, 1)}
                                     </div>
                                     {chat.online && (
                                         <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white shadow-sm" />
