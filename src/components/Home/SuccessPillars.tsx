@@ -8,27 +8,27 @@ const SuccessPillars: React.FC = () => {
     const pillars = [
         {
             icon: icon1,
-            title: 'Speed',
+            title: 'Vitesse',
             description:
-                'All listings are updated. Owners are encouraged to respond quickly. As a result, you save time at every step.'
+                'Toutes les annonces sont mises à jour. Les propriétaires sont encouragés à répondre rapidement. En conséquence, vous gagnez du temps à chaque étape.'
         },
         {
             icon: icon2,
-            title: 'Reliability',
+            title: 'Fiabilité',
             description:
-                'Your data is stored securely. Our priority: to guarantee you a reliable experience, without any unpleasant surprises.'
+                'Vos données sont stockées de manière sécurisée. Notre priorité : garantir une expérience fiable, sans surprises désagréables.'
         },
         {
             icon: icon3,
-            title: 'Accompaniement',
+            title: 'Accompagnement',
             description:
-                "Before, during, or after your application, you're never alone. Our team (and our AI assistant) are here to guide you and offer the best options for your situation."
+                "Avant, pendant, ou après votre demande, vous êtes jamais seul. Notre équipe (et notre assistant AI) sont là pour vous guider et vous offrir les meilleures options pour votre situation."
         },
         {
             icon: icon4,
-            title: 'Simplicity',
+            title: 'Simplicité',
             description:
-                'Everything is done online, from application to initial contact. Zero paperwork, zero stress.'
+                'Tout est fait en ligne, de la demande à la première communication. Aucun dossier, aucun stress.'
         }
     ];
 
@@ -39,53 +39,53 @@ const SuccessPillars: React.FC = () => {
                 {/* Badge */}
                 <div className="mb-6">
                     <span className="inline-block px-5 py-2 bg-[#2563EB1A] text-[#061251] rounded-full text-md">
-                        Quick recap
+                        Récapitulation rapide
                     </span>
                 </div>
 
                 {/* Heading */}
                 <h1 className=" sm:text-2xl lg:text-4xl mb-[20px] text-[#061251] font-dm-sans text-3xl font-semibold leading-[120%]">
-                    Our 4 pillars for <span className=" font-normal text-[#061251]  larken-font   leading-[120%]">Your Success</span>
+                    Nos 4 piliers pour <span className=" font-normal text-[#061251]  larken-font   leading-[120%]">Votre Succès</span>
                 </h1>
 
                 {/* Subheading */}
                 <p className="text-lg sm:text-xl text-[#061251] mb-10 max-w-2xl">
-                    The first platform that is revolutionizing <br /> apartment searching
+                    La première plateforme qui révolutionne <br /> la recherche d'appartements
                 </p>
 
                 {/* Cards Grid */}
                 <div className='max-w-5xl mx-auto'>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {pillars.map((pillar, index) => (
-                        <div
-                            key={index}
-                            className="bg-white rounded-3xl p-4 border border-gray-200 hover:shadow-lg transition-shadow duration-300"
-                        >
-                            {/* Icon Container */}
-                            <div className="mb-8 flex justify-center mt-2">
-                                <div
-                                    className={`w-30 h-28 bg-[#F5FAFF] rounded-xl flex items-center justify-center`}
-                                >
-                                    <img
-                                        src={pillar.icon}
-                                        alt={pillar.title}
-                                        className="w-12 h-12 object-contain"
-                                    />
+                        {pillars.map((pillar, index) => (
+                            <div
+                                key={index}
+                                className="bg-white rounded-3xl p-4 border border-gray-200 hover:shadow-lg transition-shadow duration-300"
+                            >
+                                {/* Icon Container */}
+                                <div className="mb-8 flex justify-center mt-2">
+                                    <div
+                                        className={`w-30 h-28 bg-[#F5FAFF] rounded-xl flex items-center justify-center`}
+                                    >
+                                        <img
+                                            src={pillar.icon}
+                                            alt={pillar.title}
+                                            className="w-12 h-12 object-contain"
+                                        />
+                                    </div>
                                 </div>
+
+                                {/* Title */}
+                                <h3 className="text-2xl font-semibold text-[#061251] mb-4 text-center">
+                                    {pillar.title}
+                                </h3>
+
+                                {/* Description */}
+                                <p className="text-[#061251] text-center leading-relaxed text-sm">
+                                    {pillar.description}
+                                </p>
                             </div>
-
-                            {/* Title */}
-                            <h3 className="text-2xl font-semibold text-[#061251] mb-4 text-center">
-                                {pillar.title}
-                            </h3>
-
-                            {/* Description */}
-                            <p className="text-[#061251] text-center leading-relaxed text-sm">
-                                {pillar.description}
-                            </p>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>

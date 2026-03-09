@@ -60,7 +60,7 @@ const PartnersSection: React.FC = () => {
         {/* Slider Container */}
         <div
           className="relative"
-    
+
         >
           <div className="overflow-hidden">
             <div
@@ -80,7 +80,7 @@ const PartnersSection: React.FC = () => {
             </div>
           </div>
 
-  
+
         </div>
       </div>
 

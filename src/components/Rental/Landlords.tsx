@@ -40,11 +40,11 @@ const FeatureCard = ({ icon, title, description, color }: { icon: React.ReactNod
     <FeatureIcon color={color}>
       {icon}
     </FeatureIcon>
-    
+
     <h3 className="text-xl md:text-2xl font-semibold mb-3 text-slate-900 tracking-tight leading-snug">
       {title}
     </h3>
-    
+
     <p className="text-base text-gray-600 mb-4">
       {description}
     </p>
@@ -58,69 +58,69 @@ export const Landlords = () => {
   // Data for the four feature columns
   const features = [
     {
-      title: "No more harassment",
-      description: "Access a database of pre-qualified candidates who match your criteria",
+      title: "Plus de harcèlement",
+      description: "Accédez à une base de données de candidats présélectionnés qui correspondent à vos critères",
       icon: <img src={phone} alt="Target Icon" className="h-6 w-6" />,
       color: "blue",
-  
+
     },
     {
-      title: "No more unpaid rent",
-      description: "View all supporting documents from potential tenants in one click",
+      title: "Plus de loyer impayé",
+      description: "Consultez tous les justificatifs des locataires potentiels en un seul clic",
       icon: <img src={doller} alt="Target Icon" className="h-6 w-6" />,
       color: "light-blue",
-  
+
     },
     {
-      title: "Tenant selection",
-      description: "Our AI automatically selects the best candidates for your property",
+      title: "Sélection de locataires",
+      description: "Notre IA sélectionne automatiquement les meilleurs candidats pour votre propriété",
       icon: <img src={search} alt="Target Icon" className="h-6 w-6" />, // Using Zap for speed/accuracy, mimicking the graphic target icon
       color: "purple-blue",
-  
+
     },
     {
-      title: "Lease templates",
-      description: "We publish your ad for FREE on all our paid partner sites to maximize your visibility at no extra cost.",
-      icon:  <img src={fileIcon} alt="Globe Icon" className="h-6 w-6" />,
+      title: "Modèles de bail",
+      description: "Nous publions gratuitement votre annonce sur tous nos sites partenaires payants pour maximiser votre visibilité sans frais supplémentaires.",
+      icon: <img src={fileIcon} alt="Globe Icon" className="h-6 w-6" />,
       color: "green-blue",
-   
+
     },
   ];
 
   return (
     <div className=" bg-white font-sans antialiased">
       <div className="container mx-auto px-4 sm:px-6 lg:px-0 py-16 md:py-24">
-        
+
         {/* Top Tagline: "Here's why" */}
         <div className="mb-4">
           <span className="inline-block px-4 py-2 text-xs font-medium text-indigo-700 bg-blue-600/10 rounded-full shadow-sm">
-            Here's why
+            Voici pourquoi
           </span>
         </div>
 
         {/* Main Heading and Subtitle */}
         <header className="mb-4 md:mb-8 max-w-md">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-slate-900 tracking-tight leading-tight "
-             // Using a serif-like font for the main title to mimic the image's distinct typography
-            
+          // Using a serif-like font for the main title to mimic the image's distinct typography
+
           >
-            Why do <span className="text-slate-900 font-normal italic">Landlords Love Us?</span>
+            Pourquoi <span className="text-slate-900 font-normal italic">les propriétaires nous adorent-ils ?</span>
           </h1>
           <p className="mt-4 text-md md:text-xl text-gray-700 font-normal">
-            Tools designed for modern landlords who want to save time and secure their rentals
+            Des outils conçus pour les propriétaires modernes qui souhaitent gagner du temps et sécuriser leurs locations
           </p>
         </header>
 
         {/* Feature Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
           {features.map((feature, index) => (
-            <FeatureCard 
+            <FeatureCard
               key={index}
               title={feature.title}
               description={feature.description}
               icon={feature.icon}
               color={feature.color}
-            
+
             />
           ))}
         </div>

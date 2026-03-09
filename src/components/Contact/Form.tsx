@@ -24,12 +24,12 @@ const ContactForm = () => {
           {/* --- Name Field --- */}
           <div className="flex flex-col">
             <label htmlFor="name" className={`text-base font-medium mb-2 ${labelColor}`}>
-              Name
+              Nom
             </label>
             <input
               type="text"
               id="name"
-              placeholder="Enter your name"
+              placeholder="Entrez votre nom"
               className={`py-3 px-4 border ${inputBorder} rounded-lg text-base text-gray-800 placeholder-gray-500 focus:outline-none transition duration-150`}
             />
           </div>
@@ -50,7 +50,7 @@ const ContactForm = () => {
           {/* --- Phone Field (Dropdown Added) --- */}
           <div className="flex flex-col relative">
             <label htmlFor="phone" className={`text-base font-medium mb-2 ${labelColor}`}>
-              Phone
+              Téléphone
             </label>
 
             <div
@@ -103,7 +103,7 @@ const ContactForm = () => {
             <textarea
               id="message"
               rows={5}
-              placeholder="Enter your Number"
+              placeholder="Entrez votre numéro"
               className={`py-3 px-4 border ${inputBorder} rounded-lg text-base text-gray-800 placeholder-gray-500 focus:outline-none transition duration-150 resize-none`}
             ></textarea>
           </div>
@@ -113,7 +113,7 @@ const ContactForm = () => {
             type="submit"
             className={`w-full py-3 mt-4 text-white bg-[#256AF4] shadow-[0_10px_80px_rgba(0,60,162,0.30)] p-6 rounded-lg font-semibold text-lg transition duration-300 ease-in-out`}
           >
-            SUBMIT
+            ENVOYER
           </button>
         </form>
       </div>

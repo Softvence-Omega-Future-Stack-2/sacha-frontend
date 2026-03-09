@@ -129,13 +129,13 @@ const App = () => {
           </div>
         ) : isError ? (
           <div className="text-center py-20 bg-gray-50 rounded-2xl relative -top-15">
-            <h3 className="text-xl font-semibold text-red-600">Failed to load apartments</h3>
-            <p className="text-gray-500 mt-2">Please try again later or modify your search.</p>
+            <h3 className="text-xl font-semibold text-red-600">Impossible de charger les appartements</h3>
+            <p className="text-gray-500 mt-2">Veuillez essayer plus tard ou modifier votre recherche.</p>
           </div>
         ) : apartments.length === 0 ? (
           <div className="text-center py-20 bg-gray-50 rounded-2xl relative -top-15">
             <h3 className="text-xl font-semibold text-[#061251]">No apartments found</h3>
-            <p className="text-gray-500 mt-2">Try adjusting your filters to find more properties.</p>
+            <p className="text-gray-500 mt-2">Essayez d'ajuster vos filtres pour trouver davantage de propriétés.</p>
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 relative -top-15 lg:grid-cols-3">
@@ -156,7 +156,7 @@ const App = () => {
               onClick={handleShowMore}
               className="px-10 py-3 text-[#061251] rounded-full font-semibold hover:bg-[#061251] hover:text-white transition-all duration-300 border-2 border-[#061251]"
             >
-              Show More
+              Afficher plus
             </button>
           </div>
         )}

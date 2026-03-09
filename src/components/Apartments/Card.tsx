@@ -127,8 +127,8 @@ const ApartmentCard = ({ apartment, favoriteId }: { apartment: any; favoriteId?:
 
         {/* Details */}
         <div className="flex justify-start gap-6 pb-4 mb-4">
-          <DetailItem src={furnitureIcon} alt="Furniture" text="Furnished" />
-          <DetailItem src={roomIcon} alt="Rooms" text={`${details?.rooms} Rooms`} />
+          <DetailItem src={furnitureIcon} alt="Furniture" text="Meublée" />
+          <DetailItem src={roomIcon} alt="Rooms" text={`${details?.rooms} Chambres`} />
           <DetailItem src={scaleIcon} alt="Area" text={`${details?.area}`} />
         </div>
 
@@ -137,7 +137,7 @@ const ApartmentCard = ({ apartment, favoriteId }: { apartment: any; favoriteId?:
           onClick={handleViewDetails}
           className="w-full py-3 font-semibold rounded-lg border border-[rgba(6,18,81,0.20)] text-gray-700 hover:bg-[#1077FF] hover:text-white hover:border-[#1077FF] transition"
         >
-          View Details
+          Voir les détails
         </button>
       </div>
     </div>

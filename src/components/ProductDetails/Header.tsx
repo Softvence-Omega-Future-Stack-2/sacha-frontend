@@ -52,7 +52,7 @@ const Header: React.FC<HeaderProps> = ({ ad }) => {
             onClick={handelBack}
           >
             <img src={arrowLeft} alt="Back" className="w-5 h-5 mr-2" />
-            <span className="text-lg font-medium text-[#061251] ">Back</span>
+            <span className="text-lg font-medium text-[#061251] ">Dos</span>
           </button>
         </div>
 
@@ -88,7 +88,7 @@ const Header: React.FC<HeaderProps> = ({ ad }) => {
               ) : (
                 <MessageSquare className="w-5 h-5" />
               )}
-              Message Owner
+              Propriétaire du message
             </button>
           </div>
         </div>

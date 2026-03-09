@@ -10,12 +10,12 @@ const TenantSection = () => {
             </div>
 
             <div className="max-w-3xl mx-auto">
-                     <h1 className="text-3xl sm:text-2xl lg:text-4xl  mt-[19px] text-[#061251] text-center font-dm-sans  font-semibold leading-[120%] capitalize">
-              Strong <span className="text-[#061251] larken-font font-normal leading-[120%]">Tenant Record</span>
-            </h1>
+                <h1 className="text-3xl sm:text-2xl lg:text-4xl  mt-[19px] text-[#061251] text-center font-dm-sans  font-semibold leading-[120%] capitalize">
+                    Forte <span className="text-[#061251] larken-font font-normal leading-[120%]">Tenant Record</span>
+                </h1>
 
                 <p className="text-[#061251] text-center  mt-[19px] text-sm sm:text-base md:text-lg">
-                    Your application, clear and compelling, in just <br /> a few minutes.
+                    Votre demande, claire et convaincante, en quelques minutes.
                 </p>
             </div>
 

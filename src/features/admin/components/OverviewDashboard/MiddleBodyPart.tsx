@@ -22,9 +22,9 @@ export default function App() {
                 <h2 className="text-2xl font-semibold text-gray-900">
                   Property Overview
                 </h2>
-             
+
               </div>
-              
+
 
               <div className="relative">
                 <div>
@@ -81,42 +81,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* Activity Sidebar */}
-            {/* <div className="bg-white rounded-2xl  border border-gray-100 p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-semibold text-gray-900">
-                  Activity
-                </h3>
-                <button onClick={()=> alert('No more user') }  className="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                  View all
-                </button>
-              </div>
 
-              <div className="space-y-5">
-                {activities.map((activity, index) => (
-                  <div key={index} className="flex items-center gap-4">
-                    <div className="relative">
-                      <div
-                        className={`w-12 h-12 ${activity.color} rounded-full`}
-                      >
-                        <img src={activity.image} alt={activity.name} className='w-20' />
-                      </div>
-                     
-                         
-                      <div  className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-white rounded-full" />
-
-                  
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-medium text-gray-900">
-                        {activity.name}
-                      </p>
-                      <p className="text-sm text-gray-500">{activity.action}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div> */}
           </div>
         </div>
       </div>

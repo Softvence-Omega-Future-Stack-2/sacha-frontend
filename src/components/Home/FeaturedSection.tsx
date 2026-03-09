@@ -147,7 +147,7 @@ const FeaturedApartments: React.FC = () => {
           {/* Error State */}
           {isAdsError && !isAdsLoading && (
             <div className="text-center py-20 text-red-500">
-              Failed to load featured ads. Please try again later.
+              Impossible de charger les annonces mises en avant. Veuillez réessayer plus tard.
             </div>
           )}
 
@@ -173,7 +173,7 @@ const FeaturedApartments: React.FC = () => {
           {/* Empty State */}
           {!isAdsLoading && !isAdsError && adsList.length === 0 && (
             <div className="text-center py-20 text-gray-500">
-              No featured ads available at the moment.
+              Aucune annonce mise en avant disponible pour le moment.
             </div>
           )}
 
@@ -218,23 +218,23 @@ const FeaturedApartments: React.FC = () => {
                       {/* BODY */}
                       <div className="p-0 mt-6 flex flex-col h-full">
                         {/* Price */}
-                        <div className="mb-3">
+                        <div className="mb-2">
                           <span className="text-3xl font-bold text-[#0d6efd]">
                             €{Number(ad.rent).toFixed(0)}
                           </span>
                           <span className="text-sm text-gray-600">
                             {" "}
-                            {t("featured.month_cc") || "/month"}
+                            {t("featured.month_cc") || "/mois"}
                           </span>
                         </div>
 
                         {/* Title */}
-                        <h3 className="text-lg font-semibold text-[#061251] mb-3 line-clamp-2 min-h-[56px]">
+                        <h3 className="text-lg font-semibold text-[#061251] mb-2 line-clamp-2 min-h-[56px]">
                           {ad.title}
                         </h3>
 
                         {/* Location */}
-                        <div className="flex items-center gap-2 text-[#061251] mb-4 min-h-[24px]">
+                        <div className="flex items-center gap-2 text-[#061251] mb-2 min-h-[24px]">
                           <MapPin className="w-4 h-4 shrink-0" />
                           <span className="text-sm truncate max-w-[200px]">
                             {ad.display_address || ad.address}
@@ -242,18 +242,18 @@ const FeaturedApartments: React.FC = () => {
                         </div>
 
                         {/* Features */}
-                        <div className="flex items-center gap-4 mb-5 text-[#646492] min-h-[40px]">
+                        <div className="flex items-center gap-2 mb-0 text-[#646492] min-h-[20px]">
                           <div className="flex items-center gap-1.5">
                             <img src={furniture} className="w-6 h-6" alt="furniture" />
                             <span className="text-xs">
-                              {ad.furnished ? "Furnished" : "Unfurnished"}
+                              {ad.furnished ? "Meublé" : "Non meublé"}
                             </span>
                           </div>
 
                           <div className="flex items-center gap-1.5">
                             <img src={room} className="w-6 h-6" alt="room" />
                             <span className="text-xs">
-                              {ad.rooms} {ad.rooms > 1 ? "Rooms" : "Room"}
+                              {ad.rooms} {ad.rooms > 1 ? "Chambres" : "Chambre"}
                             </span>
                           </div>
 
@@ -269,7 +269,7 @@ const FeaturedApartments: React.FC = () => {
                           className="mt-auto w-full cursor-pointer py-1.5 border border-[#06125133] text-[#061251] 
                           rounded-xl font-medium hover:bg-[#1077FF] hover:text-white transition-colors"
                         >
-                          {t("featured.view_details") || "View Details"}
+                          {t("featured.view_details") || "Voir les détails"}
                         </button>
                       </div>
                     </div>

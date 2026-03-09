@@ -6,10 +6,10 @@ const Header = () => {
         {/* Left Section */}
         <div>
           <h1 className="text-3xl lg:text-5xl larken-font font-normal text-[#061251] leading-tight mb-4">
-            Contact Us!
+            Contactez-nous!
           </h1>
           <p className="text-lg text-[#061251] mb-10">
-            Don't hesitate to contact us, we'll respond as soon as possible!
+            N'hésitez pas à nous contacter, nous vous répondrons dans les plus brefs délais!
           </p>
         </div>
       </div>

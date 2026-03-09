@@ -12,39 +12,39 @@ const DiamondIcon = <div className="text-5xl text-cyan-500 bg-transparent"> <img
 const PremiumPartner = () => {
   const features = [
     {
-      title: "Premium partner sites",
-      description: "Automatic and FREE publication on over 20 specialized websites that are normally paid (savings of up to €200/month)",
+      title: "Sites partenaires premium",
+      description: "Publication automatique et GRATUITE sur plus de 20 sites spécialisés qui sont normalement payants (économies allant jusqu'à 200 €/mois)",
       icon: GlobeIcon, // Use an actual globe icon component
     },
     {
-      title: "Partner insurers",
-      description: "Legal protection included in the tenant subscription to secure your landlord-tenant relationship",
+      title: "Assureurs partenaires",
+      description: "Protection juridique incluse dans l'abonnement locataire pour sécuriser votre relation bailleur-locataire",
       icon: ShieldIcon, // Use an actual shield icon component
     },
     {
-      title: "Premium services",
-      description: "Access to a network of certified professionals: diagnosticians, experts, specialist lawyers",
+      title: "Services premium",
+      description: "Accès à un réseau de professionnels certifiés : diagnosticiens, experts, avocats spécialisés",
       icon: DiamondIcon, // Use an actual diamond icon component
     },
   ];
 
   return (
     <div className="  py-16 px-4 sm:px-6 lg:px-8">
-      
+
       {/* Header Section */}
       <header className="text-center mb-12">
-          <h1 className="text-xl sm:text-2xl lg:text-4xl font-bold text-center text-[#1a1a4d] mb-2">
-          Premium <span className="larken-font font-light">Partner Sites</span>
+        <h1 className="text-xl sm:text-2xl lg:text-4xl font-bold text-center text-[#1a1a4d] mb-2">
+          Premium <span className="larken-font font-light">Sites partenaires</span>
         </h1>
 
         <p className="text-lg text-gray-700 font-semibold">
-          We publish your ads for FREE on partner sites that normally charge a fee.
+          Nous publions vos annonces GRATUITEMENT sur des sites partenaires qui facturent normalement des frais.
         </p>
         <p className="text-lg text-gray-700  font-semibold">
-          Save up to €200/month in publication costs!
+          Économisez jusqu'à 200 €/mois en frais de publication !
         </p>
       </header>
-      
+
       {/* Cards Section - Responsive Grid */}
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

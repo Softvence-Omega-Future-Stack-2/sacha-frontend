@@ -17,7 +17,7 @@ const App = () => {
     location: searchParams.get("location") || "",
   };
 
-  const { data, isLoading } = useSearchPropertiesQuery(params); 
+  const { data, isLoading } = useSearchPropertiesQuery(params);
   const apartments = data?.results || [];
 
   const handleShowMore = () => {

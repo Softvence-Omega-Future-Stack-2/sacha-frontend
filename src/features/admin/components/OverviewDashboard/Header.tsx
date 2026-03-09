@@ -14,7 +14,7 @@ export default function Header() {
       <div className="">
         <div className="">
           {/* Header */}
-          <Title title="Dashboard"  paragraph='Manage your assets and applications in the blink of an eye' />
+          <Title title="Dashboard" paragraph='Manage your assets and applications in the blink of an eye' />
 
 
           {/* Cards Grid */}
@@ -42,7 +42,7 @@ export default function Header() {
               <div className="flex items-start justify-between mb-4">
                 <h3 className="text-base font-medium text-gray-900">Applications received</h3>
                 <div className="p-2 bg-yellow-50 rounded-lg">
-                    <img src={user} height={24} width={24}  />
+                  <img src={user} height={24} width={24} />
                 </div>
               </div>
               <div className="mb-4">
@@ -60,7 +60,7 @@ export default function Header() {
               <div className="flex items-start justify-between mb-4">
                 <h3 className="text-base font-medium text-gray-900">Unread messages</h3>
                 <div className="p-2 bg-purple-50 rounded-lg">
-                    <img src={mngr}  height={24} width={24}  />
+                  <img src={mngr} height={24} width={24} />
                 </div>
               </div>
               <div className="mb-4">
@@ -78,7 +78,7 @@ export default function Header() {
               <div className="flex items-start justify-between mb-4">
                 <h3 className="text-base font-medium text-gray-900">Scheduled visits</h3>
                 <div className="p-2 bg-orange-50 rounded-lg">
-                    <img src={clndr}  height={24} width={24}  />
+                  <img src={clndr} height={24} width={24} />
                 </div>
               </div>
               <div className="mb-4">

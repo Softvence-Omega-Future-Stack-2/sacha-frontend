@@ -19,10 +19,9 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ name, title, imageUrl
     </div>
 
     <p className="text-gray-700 text-sm mb-6">
-      We have now bought a few properties from ClearEquite. Most of my
-      interactions have been with Jay Luo. He is nice and easy person to work
-      with. I will continue to work with them in the future for my renovation
-      projects.
+      Nous avons maintenant acheté quelques propriétés auprès de ClearEquite. La plupart de mes
+      interactions ont été avec Jay Luo. C'est une personne agréable et facile avec qui travailler.
+      Je continuerai à travailler avec eux à l'avenir pour mes projets de rénovation.
     </p>
 
     <div className="flex items-center mt-auto">
@@ -84,10 +83,10 @@ const Rating: React.FC = () => {
         {/* Heading + Arrows */}
         <div className="flex justify-between items-center mb-10">
           <h2 className="text-3xl font-medium text-blue-900 leading-snug max-w-xl">
-            A rating of{" "}
-            <span className="text-blue-600">4.8 out of 5 based on</span>{" "}
-            <span className="text-blue-600">1,659</span> reviews. Our 4 and 5
-            star reviews.
+            Une note de{" "}
+            <span className="text-blue-600">4,8 sur 5 basée sur</span>{" "}
+            <span className="text-blue-600">1 659</span> avis. Nos avis 4 et 5
+            étoiles.
           </h2>
 
           <div className="flex space-x-4">
@@ -124,11 +123,10 @@ const Rating: React.FC = () => {
             <button
               key={index}
               onClick={() => goToPage(index)}
-              className={`transition-all duration-300 rounded-full ${
-                currentPage === index
-                  ? "bg-blue-600 w-10 h-3"
-                  : "bg-gray-300 hover:bg-gray-400 w-3 h-3"
-              }`}
+              className={`transition-all duration-300 rounded-full ${currentPage === index
+                ? "bg-blue-600 w-10 h-3"
+                : "bg-gray-300 hover:bg-gray-400 w-3 h-3"
+                }`}
             />
           ))}
         </div>

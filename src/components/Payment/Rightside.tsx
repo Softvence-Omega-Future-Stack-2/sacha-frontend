@@ -74,14 +74,14 @@ const CheckoutForm = () => {
       <Toaster position="top-center" />
 
       <header className="mb-10 text-center md:text-left">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Complete Subscription</h2>
-        <p className="text-gray-500 italic">Verify your details and proceed to secure checkout</p>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">Abonnement complet</h2>
+        <p className="text-gray-500 italic">Vérifiez vos informations et procédez au paiement sécurisé.</p>
       </header>
 
       <div className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700 ml-1">Email Address</label>
+            <label className="text-sm font-semibold text-gray-700 ml-1">Adresse email</label>
             <input
               type="email"
               placeholder="email@example.com"
@@ -91,7 +91,7 @@ const CheckoutForm = () => {
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700 ml-1">Full Name</label>
+            <label className="text-sm font-semibold text-gray-700 ml-1">Nom et prénom</label>
             <input
               type="text"
               placeholder="First Last"

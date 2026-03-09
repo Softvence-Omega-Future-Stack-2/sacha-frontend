@@ -91,7 +91,7 @@ const BottomPart: React.FC<BottomPartProps> = ({ ad }) => {
 
         {/* Prestations Section */}
         <div className="md:col-span-1">
-          <h3 className="text-2xl font-semibold text-blue-900 mb-6">Equipment</h3>
+          <h3 className="text-2xl font-semibold text-blue-900 mb-6">Équipement</h3>
           <div className="bg-blue-50 py-4 px-6 inline-block rounded-xl shadow-sm border border-blue-100">
             <span className="text-xl font-semibold text-[#061251]">{amenities[0] || 'Standard'}</span>
           </div>

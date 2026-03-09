@@ -13,41 +13,41 @@ const HeroFeaturesSection: React.FC = () => {
     const topFeatures = [
         {
             icon: credit,
-            title: '€0 agency fees',
-            description: 'Save up to €2000 on your rental'
+            title: '€0 frais d\'agence',
+            description: 'Enregistrer jusqu\'à €2000 sur votre location'
         },
         {
             icon: search,
-            title: 'Active double search',
-            description: 'You apply AND receive direct offers'
+            title: 'Recherche double',
+            description: 'Vous postulez ET recevez des offres directes'
         },
         {
             icon: guarantee,
-            title: 'Guaranteed response within 48 hours',
-            description: 'You apply AND receive direct offers'
+            title: 'Réponse garantie dans 48 heures',
+            description: 'Vous postulez ET recevez des offres directes'
         },
         {
             icon: verified,
-            title: '100% verified listings',
-            description: 'Each ad is checked manually'
+            title: '100% annonces vérifiées',
+            description: 'Chaque annonce est vérifiée manuellement'
         }
     ];
 
     const bottomFeatures = [
         {
             icon: certified,
-            title: 'Certified owners',
-            description: 'Each ad is checked manually'
+            title: 'Propriétaires certifiés',
+            description: 'Chaque annonce est vérifiée manuellement'
         },
         {
             icon: tracking,
-            title: 'Real-time tracking',
-            description: 'Each ad is checked manually'
+            title: 'Suivi en temps réel',
+            description: 'Chaque annonce est vérifiée manuellement'
         },
         {
             icon: data,
-            title: 'Data protection',
-            description: 'Each ad is checked manually'
+            title: 'Protection des données',
+            description: 'Chaque annonce est vérifiée manuellement'
         }
     ];
 
@@ -62,12 +62,12 @@ const HeroFeaturesSection: React.FC = () => {
 
                 {/* Hero Heading */}
                 <h1 className=" sm:text-2xl lg:text-4xl text-[#061251] font-dm-sans text-3xl font-semibold leading-[120%] mb-4">
-                    Simpler, Faster, <span className="font-normal text-[#061251]  larken-font   leading-[120%]">Safer</span>
+                    Plus simple, Plus rapide, <span className="font-normal text-[#061251]  larken-font   leading-[120%]">Plus sûr</span>
                 </h1>
 
                 {/* Subheading */}
                 <p className="text-[#061251] mb-8 max-w-xl text-base">
-                    The first platform that is revolutionizing <br /> apartment searching
+                    La première plateforme qui révolutionne <br /> la recherche d'appartements
                 </p>
 
                 {/* Top Row - 4 Equal Cards */}

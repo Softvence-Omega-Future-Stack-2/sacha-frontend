@@ -26,49 +26,49 @@ const App = () => {
   const steps = [
     {
       number: 1,
-      title: "Publish your ad",
-      description: "Describe your property with photos and rental criteria",
+      title: "Publiez votre annonce",
+      description: "Décrivez votre propriété avec des photos et les critères de location",
     },
     {
       number: 2,
-      title: "Receive applications",
-      description: "Our system automatically suggests the best profiles to you.",
+      title: "Recevez les candidatures",
+      description: "Notre système vous suggère automatiquement les meilleurs profils.",
     },
     {
       number: 3,
-      title: "Select your tenant",
-      description: "Review the complete files and contact your favorite candidates",
+      title: "Sélectionnez votre locataire",
+      description: "Examinez les dossiers complets et contactez les candidats que vous préférez",
     },
   ];
 
   return (
     <div className="bg-blue-50 font-sans antialiased flex justify-center items-center py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-0">
-        
+
         {/* Top Tagline: "How it works" */}
         <div className="mb-4">
           <span className="inline-block px-4 py-1 text-sm font-medium text-blue-800 bg-blue-200/50 rounded-full shadow-sm">
-            How it works
+            Comment ça marche
           </span>
         </div>
 
         {/* Main Heading and Subtitle */}
-         <header className="mb-16 md:mb-20 max-w-md">
+        <header className="mb-16 md:mb-20 max-w-md">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-slate-900 tracking-tight leading-tight "
-             // Using a serif-like font for the main title to mimic the image's distinct typography
-            
+          // Using a serif-like font for the main title to mimic the image's distinct typography
+
           >
-            Find your tenant in 3  <span className="text-slate-900 font-normal italic">Simple Steps</span>
+            Trouvez votre locataire en 3  <span className="text-slate-900 font-normal italic">étapes simples</span>
           </h1>
           <p className="mt-4 text-md md:text-xl text-gray-700 font-normal">
-            In 3 simple steps, find your apartment faster than with a traditional agency
+            En 3 étapes simples, trouvez votre appartement plus rapidement qu'avec une agence traditionnelle
           </p>
         </header>
 
         {/* Steps Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {steps.map((step) => (
-            <StepCard 
+            <StepCard
               key={step.number}
               number={step.number}
               title={step.title}

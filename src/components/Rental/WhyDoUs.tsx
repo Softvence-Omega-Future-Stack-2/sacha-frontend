@@ -48,11 +48,11 @@ const FeatureCard = ({ icon, title, description, listItems, color }: { icon: Rea
     <FeatureIcon color={color}>
       {icon}
     </FeatureIcon>
-    
+
     <h3 className="text-xl md:text-2xl font-semibold mb-3 text-slate-900 tracking-tight leading-snug">
       {title}
     </h3>
-    
+
     <p className="text-base text-gray-600 mb-4">
       {description}
     </p>
@@ -70,47 +70,47 @@ const WhyDoUs = () => {
   // Data for the four feature columns
   const features = [
     {
-      title: "Intelligent candidate directory",
-      description: "Access a database of pre-qualified candidates who match your criteria",
+      title: "Annuaire intelligent de candidats",
+      description: "Accédez à une base de données de candidats présélectionnés qui correspondent à vos critères",
       icon: <img src={userIcon} alt="Target Icon" className="h-6 w-6" />,
       color: "blue",
       listItems: [
-        "Files verified",
-        "Compatibility score",
-        "Advanced filtering",
+        "Dossiers vérifiés",
+        "Score de compatibilité",
+        "Filtrage avancé",
       ],
     },
     {
-      title: "Complete files available for consultation",
-      description: "View all supporting documents from potential tenants in one click",
+      title: "Dossiers complets disponibles pour consultation",
+      description: "Consultez tous les justificatifs des locataires potentiels en un clic",
       icon: <img src={fileIcon} alt="Target Icon" className="h-6 w-6" />,
       color: "light-blue",
       listItems: [
-        "Identify documents",
-        "Payslips",
-        "Verified guarantors",
+        "Identifier les documents",
+        "Fiches de paie",
+        "Garanties vérifiées",
       ],
     },
     {
-      title: "Accurate and fast matching",
-      description: "Our AI automatically selects the best candidates for your property",
+      title: "Matching précis et rapide",
+      description: "Notre IA sélectionne automatiquement les meilleurs candidats pour votre propriété",
       icon: <img src={targetIcon} alt="Target Icon" className="h-6 w-6" />, // Using Zap for speed/accuracy, mimicking the graphic target icon
       color: "purple-blue",
       listItems: [
-        "AI Algorithm",
-        "Custom criteria",
-        "Time saving",
+        "Algorithme IA",
+        "Critères personnalisés",
+        "Gain de temps",
       ],
     },
     {
-      title: "Free multi-site distribution",
-      description: "We publish your ad for FREE on all our paid partner sites to maximize your visibility at no extra cost.",
-      icon:  <img src={globeIcon} alt="Globe Icon" className="h-6 w-6" />,
+      title: "Diffusion multi-sites gratuite",
+      description: "Nous publions gratuitement votre annonce sur tous nos sites partenaires payants pour maximiser votre visibilité sans frais supplémentaires.",
+      icon: <img src={globeIcon} alt="Globe Icon" className="h-6 w-6" />,
       color: "green-blue",
       listItems: [
-        "Partner sites normally require payment",
-        "Savings of up to €200/month",
-        "100% free for you",
+        "Les sites partenaires exigent normalement un paiement",
+        "Économies allant jusqu'à 200 €/mois",
+        "100% gratuit pour vous",
       ],
     },
   ];
@@ -118,31 +118,31 @@ const WhyDoUs = () => {
   return (
     <div className=" bg-white font-sans antialiased">
       <div className="container mx-auto px-4 lg:px-0 py-16 md:py-24">
-        
+
         {/* Top Tagline: "Here's why" */}
         <div className="mb-4">
           <span className="inline-block px-4  py-2 text-xs font-medium text-indigo-700 bg-blue-600/10 rounded-full shadow-sm">
-            Here's why
+            Voici pourquoi
           </span>
         </div>
 
         {/* Main Heading and Subtitle */}
         <header className="mb-4 md:mb-8 max-w-md">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-slate-900 tracking-tight leading-tight "
-             // Using a serif-like font for the main title to mimic the image's distinct typography
-            
+          // Using a serif-like font for the main title to mimic the image's distinct typography
+
           >
-            Why do  <span className="text-slate-900 font-normal italic">Landlords Love Us?</span>
+            Pourquoi <span className="text-slate-900 font-normal italic">les propriétaires nous adorent-ils ?</span>
           </h1>
           <p className="mt-4 text-md md:text-xl text-gray-700 font-normal">
-            Tools designed for modern landlords who want to save time and secure their rentals
+            Des outils conçus pour les propriétaires modernes qui souhaitent gagner du temps et sécuriser leurs locations.
           </p>
         </header>
 
         {/* Feature Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
           {features.map((feature, index) => (
-            <FeatureCard 
+            <FeatureCard
               key={index}
               title={feature.title}
               description={feature.description}

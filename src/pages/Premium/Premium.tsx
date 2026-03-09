@@ -7,11 +7,11 @@ import PartnersSection from "../../components/Home/PartnersSection"
 const Premium = () => {
   return (
     <>
-    <Header />
-    <Rating />
-    <PremiumMember />
-    <FAQSection />
-    <PartnersSection />
+      <Header />
+      <Rating />
+      <PremiumMember />
+      <FAQSection />
+      <PartnersSection />
     </>
   )
 }

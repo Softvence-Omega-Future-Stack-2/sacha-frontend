@@ -166,8 +166,8 @@ const ApartmentSearch: FC<ApartmentSearchProps> = ({ onSearch }) => {
             updateFilters("property_type", val);
           }}
           options={[
-            "Apartment",
-            "House",
+            "Appartement",
+            "Maison",
             "Condo",
             "Townhouse",
             "Studio",
@@ -180,7 +180,7 @@ const ApartmentSearch: FC<ApartmentSearchProps> = ({ onSearch }) => {
           <div className="w-full bg-white rounded-xl top-2 relative transition-all duration-300">
             <div className="p-3">
               <label className="text-sm text-gray-500 block mb-1 font-medium">
-                Location
+                Emplacement
               </label>
 
               <div className="relative flex items-center">
@@ -206,7 +206,7 @@ const ApartmentSearch: FC<ApartmentSearchProps> = ({ onSearch }) => {
 
         {/* Price Range */}
         <CustomSelect
-          label="Price Range"
+          label="Gamme de prix"
           value={priceRange}
           onChange={(val) => {
             setPriceRange(val);
@@ -218,36 +218,36 @@ const ApartmentSearch: FC<ApartmentSearchProps> = ({ onSearch }) => {
             "€2,000 - €5,000",
             "Over €5,000",
           ]}
-          placeholder="Any price" icon={undefined} />
+          placeholder="N'importe quel prix" icon={undefined} />
 
         {/* Rental Type */}
         <CustomSelect
-          label="Rental Type"
+          label="Type de location"
           value={rentalType}
           onChange={(val) => {
             setRentalType(val);
             updateFilters("rental_type", val);
           }}
-          options={["Furnished", "Unfurnished"]}
-          placeholder="Any" icon={undefined} />
+          options={["Meublé", "Non meublé"]}
+          placeholder="N'importe quel" icon={undefined} />
 
         {/* Rooms */}
         <CustomSelect
-          label="Rooms"
+          label="Chambres"
           value={rooms}
           onChange={(val) => {
             setRooms(val);
             updateFilters("rooms", val);
           }}
           options={["1+", "2+", "3+", "4+", "5+"]}
-          placeholder="Any" icon={undefined} />
+          placeholder="N'importe quel" icon={undefined} />
 
         {/* Reset Filters */}
         <button
           onClick={handleReset}
-          className="w-full lg:w-auto px-10 py-5 bg-blue-600 text-white font-bold text-sm uppercase rounded-xl hover:bg-blue-700 active:scale-95 transition-all duration-200 shadow-lg whitespace-nowrap"
+          className="w-full lg:w-auto px-10 py-6 mt-3 bg-blue-600 text-white font-bold text-sm uppercase rounded-xl hover:bg-blue-700 active:scale-95 transition-all duration-200 shadow-lg whitespace-nowrap"
         >
-          Reset Filters
+          Réinitialiser les filtres
         </button>
       </div>
     </div>

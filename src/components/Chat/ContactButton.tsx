@@ -9,8 +9,8 @@ interface ContactButtonProps {
     variant?: 'primary' | 'secondary';
 }
 
-const ContactButton: React.FC<ContactButtonProps> = ({ 
-    userId, 
+const ContactButton: React.FC<ContactButtonProps> = ({
+    userId,
     userName = 'owner',
     className = '',
     variant = 'primary'
@@ -22,8 +22,8 @@ const ContactButton: React.FC<ContactButtonProps> = ({
     };
 
     const baseClasses = "inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors";
-    const variantClasses = variant === 'primary' 
-        ? "bg-blue-600 text-white hover:bg-blue-700" 
+    const variantClasses = variant === 'primary'
+        ? "bg-blue-600 text-white hover:bg-blue-700"
         : "bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300";
 
     return (

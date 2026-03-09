@@ -20,9 +20,9 @@ const WorksSection: React.FC = () => {
     const handleCtaClick = () => {
         if (!isLoggedIn) {
             setShowLoginModal(true);
-           
+
         } else {
-            
+
         }
     };
 
@@ -132,32 +132,32 @@ const WorksSection: React.FC = () => {
                             </div>
                         )}
 
-                     
+
                     </div>
                 </div>
             </div>
 
             {/* Login Required Modal */}
             {showLoginModal && (
-                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] px-4">
-                   <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl text-center animate-pulse">
-                     <div className="mb-6">
-                       <div className="mx-auto w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center">
-                         <CircleUser className="w-12 h-12 text-blue-600" />
-                       </div>
-                     </div>
-                     <h3 className="text-2xl font-bold text-gray-900 mb-3">{t('works.login_modal_title')}</h3>
-                     <p className="text-gray-600 mb-8">{t('works.login_modal_desc')}</p>
-                     <div className="flex gap-4">
-                       <button onClick={() => navigate("/login")} className="flex-1 bg-[#061251] text-white py-3 rounded-xl font-medium hover:bg-[#050f3a] transition-colors">
-                         {t('works.login_modal_btn')}
-                       </button>
-                       <button onClick={() => setShowLoginModal(false)} className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-xl font-medium hover:bg-gray-300 transition-colors">
-                         {t('works.login_modal_cancel')}
-                       </button>
-                     </div>
-                   </div>
-                 </div>
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] px-4">
+                    <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl text-center animate-pulse">
+                        <div className="mb-6">
+                            <div className="mx-auto w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center">
+                                <CircleUser className="w-12 h-12 text-blue-600" />
+                            </div>
+                        </div>
+                        <h3 className="text-2xl font-bold text-gray-900 mb-3">{t('works.login_modal_title')}</h3>
+                        <p className="text-gray-600 mb-8">{t('works.login_modal_desc')}</p>
+                        <div className="flex gap-4">
+                            <button onClick={() => navigate("/login")} className="flex-1 bg-[#061251] text-white py-3 rounded-xl font-medium hover:bg-[#050f3a] transition-colors">
+                                {t('works.login_modal_btn')}
+                            </button>
+                            <button onClick={() => setShowLoginModal(false)} className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-xl font-medium hover:bg-gray-300 transition-colors">
+                                {t('works.login_modal_cancel')}
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
         </>
     );

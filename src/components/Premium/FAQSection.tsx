@@ -12,28 +12,28 @@ type FAQItem = {
 const faqItems: FAQItem[] = [
   {
     id: 1,
-    question: 'What is HelloAppart used for?',
+    question: 'À quoi sert HelloAppart ?',
     answer: 'Lorem ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, Lorem ipsum is simply dummy text of the printing and typesetting industry.',
   },
   {
     id: 2,
-    question: 'How does the paid trial work?',
-    answer: 'The paid trial gives you full access to all premium features for a limited time. You can apply to unlimited apartments and utilize our secure document submission process. You can cancel anytime before the trial ends to avoid being charged.',
+    question: 'Comment fonctionne l\'essai payant ?',
+    answer: 'L\'essai payant vous donne accès à toutes les fonctionnalités premium pendant une durée limitée. Vous pouvez postuler à un nombre illimité d\'appartements et utiliser notre processus sécurisé de soumission de documents. Vous pouvez annuler à tout moment avant la fin de l\'essai pour éviter d\'être facturé.',
   },
   {
     id: 3,
-    question: 'Is the subscription commitment-free?',
-    answer: 'Yes, absolutely. Our subscription is commitment-free. You can cancel your membership at any time directly from your account settings, with no hidden fees or penalties.',
+    question: 'L\'abonnement est-il sans engagement ?',
+    answer: 'Oui, absolument. Notre abonnement est sans engagement. Vous pouvez annuler votre adhésion à tout moment directement depuis les paramètres de votre compte, sans frais cachés ni pénalités.',
   },
   {
     id: 4,
-    question: 'What is DossierFacile?',
-    answer: 'DossierFacile is a free public service provided by the French government to simplify the creation of a rental application file (dossier). It helps tenants create a clear, complete, and secure file to send to landlords.',
+    question: 'Qu\'est-ce que DossierFacile ?',
+    answer: 'DossierFacile est un service public gratuit fourni par le gouvernement français pour simplifier la création d\'un dossier de candidature locative. Il aide les locataires à créer un dossier clair, complet et sécurisé à envoyer aux propriétaires.',
   },
   {
     id: 5,
-    question: 'Do you have a customer service department?',
-    answer: 'Yes, we have a dedicated customer service department ready to assist you. You can reach us via email, phone, or through the live chat available on our website during business hours.',
+    question: 'Avez-vous un service client ?',
+    answer: 'Oui, nous avons un service client dédié prêt à vous aider. Vous pouvez nous contacter par e-mail, téléphone ou via le chat en direct disponible sur notre site web pendant les heures d\'ouverture.',
   },
 ];
 
@@ -81,10 +81,10 @@ const FAQSection = () => {
         {/* Header Section */}
         <div className="mb-12">
           <h1 className="text-4xl font-medium text-[#061251] mb-2">
-            Still Not<span className="larken-font font-normal text-[#061251]"> Convinced?</span>
+            Toujours pas<span className="larken-font font-normal text-[#061251]"> convaincu?</span>
           </h1>
           <p className="text-[#061251] text-lg">
-            Frequently Asked Questions
+            Foire Aux Questions
           </p>
         </div>
 
@@ -107,9 +107,8 @@ const FAQSection = () => {
               )}
             </button>
             <div
-              className={`overflow-hidden transition-all duration-500 ease-in-out ${
-                openItemId === faqItems[0].id ? 'max-h-96 opacity-100 mt-4' : 'max-h-0 opacity-0'
-              }`}
+              className={`overflow-hidden transition-all duration-500 ease-in-out ${openItemId === faqItems[0].id ? 'max-h-96 opacity-100 mt-4' : 'max-h-0 opacity-0'
+                }`}
             >
               <p className="text-gray-700">{faqItems[0].answer}</p>
             </div>

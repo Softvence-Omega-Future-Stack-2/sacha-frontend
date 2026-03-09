@@ -364,7 +364,7 @@ const Rightside = () => {
     e.preventDefault();
 
     if (!validateForm()) {
-      showToast("Please fix the errors in the form", "error");
+      showToast("Veuillez corriger les erreurs dans le formulaire", "error");
       return;
     }
 
@@ -381,7 +381,7 @@ const Rightside = () => {
 
     try {
       await registerClient(payload).unwrap();
-      showToast("Account created successfully!", "success");
+      showToast("Compte créé avec succès!", "success");
       setTimeout(() => navigate("/otp", { state: { email: formData.email.trim() } }), 1500);
     } catch (error: any) {
       const errMsg =
@@ -410,19 +410,19 @@ const Rightside = () => {
             <img src={logo} alt="Logo" className="h-10 w-auto" />
           </div>
           <h1 className="text-3xl font-medium text-[#061251] mt-4">
-            Create your account
+            Créez votre compte
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Create your profile on My Appart and access rentals or tenants that
-            match your criteria in just a few clicks.
+            Créez votre profil sur My Appart et accédez aux locations ou aux locataires qui
+            correspondent à vos critères en quelques clics.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <RoleButton
             role="tenant"
-            label="I Am A Tenant"
-            description="And I'm looking for a place to rent."
+            label="Je suis locataire"
+            description="Et je cherche un logement à louer."
             isSelected={userRole === "tenant"}
             onClick={setUserRole}
           />
@@ -562,7 +562,7 @@ const Rightside = () => {
         </form>
 
         <p className="text-center text-md text-gray-500 mt-4">
-          Already have an account?{" "}
+          Already have an account?
           <a
             href="/login"
             className="text-blue-600 hover:text-blue-700 font-semibold"

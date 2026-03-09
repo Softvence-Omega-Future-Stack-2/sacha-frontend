@@ -49,9 +49,9 @@ interface AdModalProps {
 }
 
 const CONSTANT_EQUIPMENT = [
-  'WiFi', 'Terrace', 'Elevator', 'Air Conditioning',
-  'Parking', 'Garden', 'Dishwasher', 'Heating',
-  'Balcony', 'Cellar', 'Washing machine', 'Chimney'
+  'WiFi', 'Terrasse', 'Ascenseur', 'Climatisation',
+  'Parking', 'Jardin', 'Lave-vaisselle', 'Chauffage',
+  'Balcon', 'Cave', 'Machine à laver', 'Cheminée'
 ];
 
 const AdModal: React.FC<AdModalProps> = ({ isOpen, onClose, onSuccess }) => {
@@ -139,7 +139,7 @@ const AdModal: React.FC<AdModalProps> = ({ isOpen, onClose, onSuccess }) => {
   const handleCreateAd = async () => {
     // Form Validation
     if (!formData.title || !formData.address || !formData.city || !formData.rent || !formData.available_from) {
-      toast.error("Please fill out all required fields (Title, Address, City, Rent, Available From).");
+      toast.error("Veuillez remplir tous les champs requis (Titre, Adresse, Ville, Loyer, Date de disponibilité).");
       return;
     }
 
@@ -173,7 +173,6 @@ const AdModal: React.FC<AdModalProps> = ({ isOpen, onClose, onSuccess }) => {
       onClose();
       onSuccess();
     } catch (err: any) {
-      console.error("Ad creation failed:", err);
       toast.error(err?.data?.message || err?.data?.detail || "Failed to create ad. Please try again.");
     } finally {
       setIsLoading(false);
@@ -196,7 +195,7 @@ const AdModal: React.FC<AdModalProps> = ({ isOpen, onClose, onSuccess }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center p-6 border-b border-gray-200">
-          <h2 className="text-xl font-medium italic text-gray-800">Create a New Ad</h2>
+          <h2 className="text-xl font-medium italic text-gray-800">Créer une nouvelle annonce</h2>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-900 p-1">
             <CloseIcon />
           </button>
@@ -205,62 +204,62 @@ const AdModal: React.FC<AdModalProps> = ({ isOpen, onClose, onSuccess }) => {
         <div className="p-6 overflow-y-auto h-[calc(100%-100px)] space-y-6">
           {/* Ad Title */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Ad Title *</label>
-            <input name="title" value={formData.title} onChange={handleInputChange} type="text" className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1077FF]" placeholder="Example: Bright 3-room apartment" />
+            <label className="block text-sm font-semibold text-gray-700 mb-1">Titre de l'annonce *</label>
+            <input name="title" value={formData.title} onChange={handleInputChange} type="text" className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1077FF]" placeholder="Exemple : Appartement lumineux de 3 pièces" />
           </div>
 
           {/* Description */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">Description</label>
-            <textarea name="description" value={formData.description} onChange={handleInputChange} rows={4} className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1077FF] resize-none" placeholder="Describe your property..." />
+            <textarea name="description" value={formData.description} onChange={handleInputChange} rows={4} className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1077FF] resize-none" placeholder="Décrivez votre propriété..." />
           </div>
 
           {/* Address */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Address *</label>
-            <input name="address" value={formData.address} onChange={handleInputChange} type="text" className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1077FF]" placeholder="Full Address" />
+            <label className="block text-sm font-semibold text-gray-700 mb-1">Adresse *</label>
+            <input name="address" value={formData.address} onChange={handleInputChange} type="text" className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1077FF]" placeholder="Adresse complète" />
           </div>
 
           {/* Display Address & Exact Address Checkbox */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Display Address</label>
-            <input name="display_address" value={formData.display_address} onChange={handleInputChange} type="text" className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1077FF]" placeholder="Publicly visible address" />
+            <label className="block text-sm font-semibold text-gray-700 mb-1">Adresse affichée</label>
+            <input name="display_address" value={formData.display_address} onChange={handleInputChange} type="text" className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1077FF]" placeholder="Adresse affichée publiquement" />
             <label className="flex items-center space-x-2 mt-3 cursor-pointer">
               <input type="checkbox" name="show_exact_address" checked={formData.show_exact_address} onChange={handleInputChange} className="w-4 h-4 text-[#1077FF] rounded focus:ring-[#1077FF]" />
-              <span className="text-sm text-gray-700">Show exact address publicly</span>
+              <span className="text-sm text-gray-700">Afficher l'adresse exacte publiquement</span>
             </label>
           </div>
 
           {/* City & Postal Code */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">City *</label>
-              <input name="city" value={formData.city} onChange={handleInputChange} type="text" className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1077FF]" placeholder="City" />
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Ville *</label>
+              <input name="city" value={formData.city} onChange={handleInputChange} type="text" className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1077FF]" placeholder="Ville" />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Postal code</label>
-              <input name="postal_code" value={formData.postal_code} onChange={handleInputChange} type="text" className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1077FF]" placeholder="Postal Code" />
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Code postal</label>
+              <input name="postal_code" value={formData.postal_code} onChange={handleInputChange} type="text" className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1077FF]" placeholder="Code postal" />
             </div>
           </div>
 
           {/* Property & Rental Type */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Property Type</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Type de propriété</label>
               <select name="property_type" value={formData.property_type} onChange={handleInputChange} className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1077FF]">
                 <option value="studio">Studio</option>
-                <option value="apartment">Apartment</option>
-                <option value="house">House</option>
+                <option value="apartment">Appartement</option>
+                <option value="house">Maison</option>
               </select>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Rental Type</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Type de location</label>
               <select name="rental_type" value={formData.rental_type} onChange={(e) => {
                 const val = e.target.value;
                 setFormData(prev => ({ ...prev, rental_type: val, furnished: val === "furnished" }));
               }} className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1077FF]">
-                <option value="furnished">Furnished</option>
-                <option value="unfurnished">Unfurnished</option>
+                <option value="furnished">Meublé</option>
+                <option value="unfurnished">Non meublé</option>
               </select>
             </div>
           </div>
@@ -268,21 +267,21 @@ const AdModal: React.FC<AdModalProps> = ({ isOpen, onClose, onSuccess }) => {
           {/* Financials */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Rent / month (€) *</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Loyer / mois (€) *</label>
               <input type="text" name="rent" value={formData.rent} onChange={handleInputChange} className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1077FF]" />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Security Deposit (€)</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Caution (€)</label>
               <input type="text" name="deposit" value={formData.deposit} onChange={handleInputChange} className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1077FF]" />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Monthly Charges (€)</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Charges mensuelles (€)</label>
               <input type="text" name="monthly_charges" value={formData.monthly_charges} onChange={handleInputChange} className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1077FF]" />
             </div>
             <div className="flex items-center pt-6">
               <label className="flex items-center space-x-2 cursor-pointer">
                 <input type="checkbox" name="rent_guarantee_insurance" checked={formData.rent_guarantee_insurance} onChange={handleInputChange} className="w-5 h-5 text-[#1077FF] rounded focus:ring-[#1077FF]" />
-                <span className="text-sm font-medium text-gray-700">Rent guarantee insurance</span>
+                <span className="text-sm font-medium text-gray-700">Assurance garantie loyer</span>
               </label>
             </div>
           </div>
@@ -290,46 +289,46 @@ const AdModal: React.FC<AdModalProps> = ({ isOpen, onClose, onSuccess }) => {
           {/* Specs */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Area (m²)</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Surface (m²)</label>
               <input type="number" name="surface_sqm" value={formData.surface_sqm === 0 ? "" : formData.surface_sqm} onChange={handleInputChange} className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1077FF]" />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Floor</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Étage</label>
               <input type="number" name="floor" value={formData.floor === 0 ? "" : formData.floor} onChange={handleInputChange} className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1077FF]" />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Total Rooms</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Nombre total de pièces</label>
               <input type="number" name="rooms" value={formData.rooms === 0 ? "" : formData.rooms} onChange={handleInputChange} className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1077FF]" />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Total Pieces</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Nombre de pièces</label>
               <input type="number" name="pieces" value={formData.pieces === 0 ? "" : formData.pieces} onChange={handleInputChange} className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1077FF]" />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Bedrooms</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Chambres</label>
               <input type="number" name="bedrooms" value={formData.bedrooms === 0 ? "" : formData.bedrooms} onChange={handleInputChange} className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1077FF]" />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Bathrooms</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Salles de bain</label>
               <input type="number" name="bathrooms" value={formData.bathrooms === 0 ? "" : formData.bathrooms} onChange={handleInputChange} className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1077FF]" />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Built Year</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Année de construction</label>
               <input type="number" name="built_year" value={formData.built_year === 0 ? "" : formData.built_year} onChange={handleInputChange} className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1077FF]" />
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1">Orientation</label>
               <select name="orientation" value={formData.orientation} onChange={handleInputChange} className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1077FF]">
-                <option value="north">North</option>
-                <option value="south">South</option>
-                <option value="east">East</option>
-                <option value="west">West</option>
+                <option value="north">Nord</option>
+                <option value="south">Sud</option>
+                <option value="east">Est</option>
+                <option value="west">Ouest</option>
               </select>
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Available from *</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">Disponible à partir de *</label>
             <input name="available_from" value={formData.available_from} onChange={handleInputChange} type="date" className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1077FF]" />
           </div>
 
@@ -363,7 +362,7 @@ const AdModal: React.FC<AdModalProps> = ({ isOpen, onClose, onSuccess }) => {
 
           {/* Photos */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Photos of the property</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Photos de la propriété</label>
 
             {images.length > 0 && (
               <div className="grid grid-cols-3 gap-3 mb-4">
@@ -384,15 +383,15 @@ const AdModal: React.FC<AdModalProps> = ({ isOpen, onClose, onSuccess }) => {
                 <svg className="w-12 h-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                 </svg>
-                <p className="text-gray-600 font-medium">Drag & Drop your files</p>
-                <p className="text-[#1077FF] font-semibold mt-1">Browse file</p>
+                <p className="text-gray-600 font-medium">Glissez et déposez vos fichiers</p>
+                <p className="text-[#1077FF] font-semibold mt-1">Parcourir les fichiers</p>
               </div>
             </div>
           </div>
 
           {/* Equipment */}
           <div className="pb-16">
-            <label className="block text-sm font-semibold text-gray-700 mb-4">Equipment & Services</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-4">Équipements et services</label>
             <div className="grid grid-cols-2 gap-4">
               {CONSTANT_EQUIPMENT.map((item) => (
                 <label key={item} className="flex items-center space-x-3 cursor-pointer">
@@ -408,7 +407,7 @@ const AdModal: React.FC<AdModalProps> = ({ isOpen, onClose, onSuccess }) => {
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
           <div className="flex justify-between space-x-4">
             <button onClick={onClose} disabled={isLoading} className="w-full px-6 py-3 border border-gray-300 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-60">
-              CANCEL
+              ANNULER
             </button>
             <button onClick={handleCreateAd} disabled={isLoading} className="relative w-full px-6 py-3 bg-[#1077FF] text-white rounded-xl font-semibold hover:bg-[#0e66e6] transition-colors disabled:opacity-80 flex items-center justify-center gap-2">
               {isLoading ? (
@@ -417,9 +416,9 @@ const AdModal: React.FC<AdModalProps> = ({ isOpen, onClose, onSuccess }) => {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
                   </svg>
-                  Creating...
+                  Création...
                 </>
-              ) : 'CREATE THE AD'}
+              ) : 'CRÉER L\'ANNONCE'}
             </button>
           </div>
         </div>
@@ -459,19 +458,19 @@ const HeroSection: React.FC = () => {
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
             <div className="text-white">
               <h1 className="text-3xl lg:text-5xl font-bold leading-tight mb-6">
-                Your Property <br /> <span className="larken-font font-light">Management</span>
+                La Gestion de <br /> <span className="larken-font font-light">Propriété</span>
                 <br />
-                <span className="italic font-light"> 100% Free</span>
+                <span className="italic font-light"> 100% Gratuit</span>
               </h1>
               <p className="text-base sm:text-lg text-white/90 mb-8 max-w-lg">
-                Access a directory of pre-qualified candidates, view their complete files and securely select the ideal tenant.
+                Accédez à un répertoire de candidats présélectionnés, consultez leurs dossiers complets et sélectionnez en toute sécurité le locataire idéal.
               </p>
               <div className="flex flex-wrap gap-4">
                 <button
                   onClick={handlePostAdClick}
                   className="px-6 py-4 uppercase bg-white text-[#1077FF] rounded-xl font-semibold text-[15px] hover:bg-white/95 transition-colors"
                 >
-                  Post an ad
+                  Publier une annonce
                 </button>
               </div>
             </div>
@@ -488,14 +487,14 @@ const HeroSection: React.FC = () => {
                 <CircleUser className="w-12 h-12 text-blue-600" />
               </div>
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">You must be logged in</h3>
-            <p className="text-gray-600 mb-8">Please log in to continue with your application.</p>
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">Vous devez être connecté</h3>
+            <p className="text-gray-600 mb-8">Veuillez vous connecter pour continuer votre candidature.</p>
             <div className="flex gap-4">
               <button onClick={() => navigate("/login")} className="flex-1 bg-[#061251] text-white py-3 rounded-xl font-medium hover:bg-[#050f3a] transition-colors">
-                Go to Login
+                Se connecter
               </button>
               <button onClick={() => setShowLoginModal(false)} className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-xl font-medium hover:bg-gray-300 transition-colors">
-                Cancel
+                Annuler
               </button>
             </div>
           </div>

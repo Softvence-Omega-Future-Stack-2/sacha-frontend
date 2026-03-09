@@ -23,8 +23,8 @@ const StatsSection: React.FC = () => {
   const stats = [
     { value: '2000+', label: t('stats.apartments_available') },
     { value: '€0', label: t('stats.agency_fees') },
-    { value: '7 days', label: t('stats.average_time') },
-    { value: '48 hours', label: t('stats.guaranteed_response') }
+    { value: '7 jours', label: t('stats.average_time') },
+    { value: '48 heures', label: t('stats.guaranteed_response') }
   ];
 
   return (

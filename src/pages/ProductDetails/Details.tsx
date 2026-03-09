@@ -70,10 +70,10 @@ const Details = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6 text-center">
         <div>
-          <h2 className="text-2xl font-bold text-[#061251] mb-2">Failed to load property details</h2>
-          <p className="text-gray-500 mb-6">The property you are looking for may have been removed or is currently unavailable.</p>
+          <h2 className="text-2xl font-bold text-[#061251] mb-2">Impossible de charger les détails de la propriété</h2>
+          <p className="text-gray-500 mb-6">La propriété que vous recherchez a peut-être été supprimée ou est actuellement indisponible.</p>
           <button onClick={() => window.history.back()} className="px-8 py-3 bg-[#1077FF] text-white rounded-lg font-semibold">
-            Go Back
+            Retour
           </button>
         </div>
       </div>

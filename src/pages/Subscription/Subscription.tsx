@@ -41,7 +41,7 @@ export default function Subscription() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="flex flex-col items-center gap-4">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
-          <p className="text-gray-500 font-medium">Loading subscription status...</p>
+          <p className="text-gray-500 font-medium">Chargement du statut de l'abonnement...</p>
         </div>
       </div>
     );
@@ -56,13 +56,13 @@ export default function Subscription() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Restricted</h2>
-          <p className="text-gray-600 mb-8">Subscriptions are currently only available for Tenant accounts. Please log in with a tenant account to continue.</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Accès Restreint</h2>
+          <p className="text-gray-600 mb-8">Les abonnements sont actuellement réservés aux comptes locataires. Veuillez vous connecter avec un compte locataire pour continuer.</p>
           <button
             onClick={() => window.history.back()}
             className="w-full py-3 bg-gray-900 text-white rounded-xl font-semibold hover:bg-gray-800 transition-colors"
           >
-            Go Back
+            Retour
           </button>
         </div>
       </div>
@@ -78,7 +78,7 @@ export default function Subscription() {
       <div className="max-w-4xl mx-auto">
         <header className="text-center mb-12">
           <h1 className="text-4xl font-extrabold text-gray-900 mb-4 tracking-tight">Premium Membership</h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">Unlock the full potential of Sacha with our premium features designed for serious tenants.</p>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">Débloquez tout le potentiel de Sacha avec nos fonctionnalités premium conçues pour les locataires sérieux.</p>
         </header>
 
         {hasSubscription ? (
@@ -87,11 +87,11 @@ export default function Subscription() {
             <div className="w-20 h-20 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-6 transform rotate-3">
               <Check className="w-10 h-10 text-green-600" />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-3">Subscription Active</h2>
-            <p className="text-gray-600 mb-8 max-w-md mx-auto">You are currently on the Premium Plan. All premium features are active on your account.</p>
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">Abonnement Actif</h2>
+            <p className="text-gray-600 mb-8 max-w-md mx-auto">Vous êtes actuellement sur le Plan Premium. Toutes les fonctionnalités premium sont actives sur votre compte.</p>
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-semibold">
               <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-              Account Status: Pro
+              Statut du compte : Pro
             </div>
           </div>
         ) : (
@@ -144,14 +144,14 @@ export default function Subscription() {
                   {checkoutLoading ? (
                     <>
                       <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                      Processing...
+                      Traitement...
                     </>
                   ) : (
-                    "Upgrade to pro"
+                    "Passer à Pro"
                   )}
                 </button>
                 <p className="text-center mt-6 text-xs text-blue-100 opacity-80">
-                  Secure payment via Stripe. Tax included where applicable.
+                  Paiement sécurisé via Stripe. Taxes incluses le cas échéant.
                 </p>
               </div>
             </div>

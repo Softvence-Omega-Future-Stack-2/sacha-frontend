@@ -1,5 +1,6 @@
 import React from 'react';
 import logo from '../../assets/main-logo.png'
+import { Link } from 'react-router-dom';
 
 const Footer: React.FC = () => {
   return (
@@ -18,39 +19,39 @@ const Footer: React.FC = () => {
             <h3 className="text-gray-900 font-semibold text-xl mb-4">Navigation</h3>
             <ul className="space-y-3 pl-5">
               <li className="list-disc pl-3 marker:text-gray-600 hover:marker:text-blue-500">
-                <a
-                  href="#"
+                <Link
+                  to="/apartments"
                   className="text-[#061251] hover:text-blue-500 transition-colors text-md"
                 >
-                  Our apartments
-                </a>
+                  Nos appartements
+                </Link>
               </li>
 
               <li className="list-disc pl-3 marker:text-gray-600 hover:marker:text-blue-500">
-                <a
-                  href="#"
+                <Link
+                  to="/subscription"
                   className="text-[#061251] hover:text-blue-500 transition-colors text-md"
                 >
-                  Our Apartments
-                </a>
+                  Abonnement
+                </Link>
               </li>
 
               <li className="list-disc pl-3 marker:text-gray-600 hover:marker:text-blue-500">
-                <a
-                  href="#"
+                <Link
+                  to="/premium"
                   className="text-[#061251] hover:text-blue-500 transition-colors text-md"
                 >
-                  Premium Service
-                </a>
+                  Service Premium
+                </Link>
               </li>
 
               <li className="list-disc pl-3 marker:text-gray-600 hover:marker:text-blue-500">
-                <a
-                  href="#"
+                <Link
+                  to="/faq"
                   className="text-[#061251] hover:text-blue-500 transition-colors text-md"
                 >
                   FAQ
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -61,13 +62,13 @@ const Footer: React.FC = () => {
             <ul className="space-y-3 pl-5">
               <li className='list-disc pl-3 marker:text-gray-600 hover:marker:text-blue-500'>
                 <a href="#" className="text-[#061251] hover:text-blue-500 transition-colors text-md">
-                  Login
+                  Se connecter
                 </a>
               </li>
 
               <li className='list-disc pl-3 marker:text-gray-600 hover:marker:text-blue-500'>
                 <a href="#" className="text-[#061251] hover:text-blue-500 transition-colors text-md">
-                  Registration
+                  S'inscrire
                 </a>
               </li>
 
@@ -84,9 +85,9 @@ const Footer: React.FC = () => {
             <h3 className="text-gray-900 font-semibold text-xl mb-4">Contact</h3>
             <ul className="space-y-4">
               <li className="text-md flex flex-col sm:flex-row gap-2 sm:gap-3">
-                <span className="text-[#061251]">Address</span>
+                <span className="text-[#061251]">Adresse</span>
                 <p className="text-[#061251] leading-snug">
-                  1803 Research Blvd Unit 102, Rockvill, MD 20850
+                  1803 Research Blvd, unité 102, Rockville, MD 20850
                 </p>
               </li>
 
@@ -103,7 +104,7 @@ const Footer: React.FC = () => {
               </li>
 
               <li className="text-md flex flex-col sm:flex-row gap-2 sm:gap-6">
-                <span className="text-[#061251]">Phone</span>
+                <span className="text-[#061251]">Téléphone</span>
                 <p className="text-[#061251]">
                   <a href="tel:240-907-1065" className="hover:text-blue-500 transition-colors">
                     240-907-1065
@@ -119,7 +120,7 @@ const Footer: React.FC = () => {
       {/* Copyright */}
       <div className="mt-12 py-6 border-t border-gray-200">
         <p className="text-center text-[#061251] text-sm">
-          © 2025. HomeAppart - All rights reserved
+          © 2025. HomeAppart - Tous droits réservés
         </p>
       </div>
     </footer>

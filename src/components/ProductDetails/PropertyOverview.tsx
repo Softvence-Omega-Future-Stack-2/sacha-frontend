@@ -43,29 +43,29 @@ const PropertyOverview: React.FC<PropertyOverviewProps> = ({ ad }) => {
 
   const handleApplyClick = async () => {
     if (!user) {
-      toast.error('Please log in to apply for this property.');
+      toast.error('Veuillez vous connecter pour postuler à ce bien.');
       navigate('/login');
       return;
     }
 
     if (!isTenant) {
-      toast.error('Only tenants can apply for properties.');
+      toast.error('Seuls les locataires peuvent postuler à des biens.');
       return;
     }
 
     if (!hasSubscription) {
-      toast.error('You need an active Premium subscription to apply.');
+      toast.error('Vous devez avoir un abonnement Premium actif pour postuler.');
       navigate('/subscription');
       return;
     }
 
     try {
       await createPossession({ ad: ad.id }).unwrap();
-      toast.success('Your application has been successfully sent to the owner!');
+      toast.success('Votre candidature a été envoyée avec succès au propriétaire !');
     } catch (error: any) {
-      console.error('Application error:', error);
+      console.error('Erreur de candidature:', error);
       // Handle potential duplicate applications based on API response structure
-      const errorMsg = error?.data?.ad?.[0] || error?.data?.non_field_errors?.[0] || error?.data?.message || 'Failed to submit application. You might have already applied or an error occurred.';
+      const errorMsg = error?.data?.ad?.[0] || error?.data?.non_field_errors?.[0] || error?.data?.message || 'Échec de la soumission de la candidature. Vous avez peut-être déjà postulé ou une erreur s\'est produite.';
       toast.error(errorMsg);
     }
   };
@@ -78,14 +78,14 @@ const PropertyOverview: React.FC<PropertyOverviewProps> = ({ ad }) => {
         <div className="lg:col-span-2">
           {ad.furnished && (
             <div className="inline-block px-3 py-1 text-sm font-medium text-blue-800 bg-blue-100 rounded-full mb-6">
-              Furnished
+              Meublé
             </div>
           )}
 
-          <h2 className="text-3xl font-semibold text-gray-900 mb-4">Property Overview</h2>
+          <h2 className="text-3xl font-semibold text-gray-900 mb-4">Aperçu de la propriété</h2>
 
           <p className="text-[#646492] text-[16px] mb-8">
-            Ref: {ad.id}
+            Réf: {ad.id}
           </p>
 
           <div className="divide-y divide-gray-200">
@@ -100,10 +100,10 @@ const PropertyOverview: React.FC<PropertyOverviewProps> = ({ ad }) => {
         <div className="lg:col-span-1">
           <div className="bg-[#EAF3FF] p-6 rounded-xl text-center shadow-sm border border-blue-50">
             <h3 className="text-xl font-medium text-[#061251] mb-4">
-              Are you interested in this ad?
+              Êtes-vous intéressé par cette annonce ?
             </h3>
             <p className="text-sm font-light text-[#061251] mb-6">
-              Apply now to share your profile with the owner of this property.
+              Postulez maintenant pour partager votre profil avec le propriétaire de ce bien.
             </p>
 
             <button
@@ -116,8 +116,8 @@ const PropertyOverview: React.FC<PropertyOverviewProps> = ({ ad }) => {
             </button>
 
             {ad.owner && (
-              <ContactButton 
-                userId={ad.owner} 
+              <ContactButton
+                userId={ad.owner}
                 userName="owner"
                 variant="secondary"
                 className="w-full mt-3"
