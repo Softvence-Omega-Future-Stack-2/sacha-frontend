@@ -1,24 +1,20 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { connectSocket, getSocket } from "../services/socket";
 
-interface ChatMessage {
-    id: string;
-    sender: string;
-    message: string;
-    timestamp: string;
-    read?: boolean;
-}
+import type { SocketMessage } from "../types";
 
 export const useChatSocket = (roomId: string, token: string) => {
-    const [messages, setMessages] = useState<ChatMessage[]>([]);
+    const [messages, setMessages] = useState<SocketMessage[]>([]);
     const [socketStatus, setSocketStatus] = useState<number>(WebSocket.CLOSED);
     const queueRef = useRef<string[]>([]);
     const reconnectRef = useRef<any>(null);
 
     // Connect to WebSocket
     const connect = useCallback(() => {
-        if (!roomId || !token) return;
+        if (!roomId || !token) return null;
         const socket = connectSocket(roomId, token);
+        if (!socket) return null;
+
         setSocketStatus(socket.readyState);
 
         socket.onopen = () => {
@@ -33,22 +29,26 @@ export const useChatSocket = (roomId: string, token: string) => {
 
         socket.onmessage = (event: MessageEvent) => {
             try {
-                const data: ChatMessage = JSON.parse(event.data);
-                setMessages((prev) => [...prev, data]);
+                const data: SocketMessage = JSON.parse(event.data);
+                if (data.type === 'chat_message') {
+                    setMessages((prev: any) => [...prev, data]);
+                }
             } catch (err) {
                 console.error("[ChatSocket] Error parsing message:", err);
             }
         };
 
         socket.onclose = (event) => {
-            setSocketStatus(WebSocket.CLOSED);
+            if (socket.url.includes(`/ws/chat/${roomId}/`)) {
+                setSocketStatus(WebSocket.CLOSED);
+            }
             if (!event.wasClean) {
                 console.warn("[ChatSocket] Connection lost, retrying in 3s...");
                 reconnectRef.current = setTimeout(connect, 3000);
             }
         };
 
-        socket.onerror = (err) => {
+        socket.onerror = (err: any) => {
             console.error("[ChatSocket] Socket error:", err);
             setSocketStatus(WebSocket.CLOSED);
             socket.close();
@@ -68,9 +68,9 @@ export const useChatSocket = (roomId: string, token: string) => {
 
     // Send message
     const sendMessage = useCallback(
-        (message: string, type: "text" | "typing" | "read" = "text") => {
+        (message: string, toUserId: number) => {
             const socket = getSocket();
-            const payload = JSON.stringify({ type, message });
+            const payload = JSON.stringify({ message, to_user_id: toUserId });
 
             if (socket && socket.readyState === WebSocket.OPEN) {
                 socket.send(payload);

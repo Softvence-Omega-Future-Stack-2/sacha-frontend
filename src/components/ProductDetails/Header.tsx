@@ -34,15 +34,15 @@ const Header: React.FC<HeaderProps> = ({ ad }) => {
         ? '/dashboard-owner/messages'
         : '/dashboard-tenant/messages';
 
-      navigate(redirectPath, { state: { conversationId: result.id } });
+      navigate(redirectPath, { state: { conversationId: result.conversation_id } });
     } catch (error) {
       console.error("Failed to create conversation:", error);
     }
   };
   return (
-    // Outer container with the light blue-gray background color and overall padding
+
     <div className=" bg-gradient-to-b from-[rgba(37,99,235,0.20)] to-[rgba(37,99,235,0.20)] p-8">
-      {/* Card-like container for the content, simulating the main light blue background */}
+
       <div className=" p-6 sm:p-10 container mx-auto ">
 
         {/* Top section: Back button */}

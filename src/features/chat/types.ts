@@ -13,24 +13,26 @@ export interface Message {
     is_read: boolean;
 }
 
-export interface Conversation {
-    id: string | number;
-    last_message?: Message | null;
-    created_at: string;
-    other_user?: {
-        id: number;
-        email: string;
-        profile_picture?: string | null;
-        dp_image?: string | null;
-        full_name?: string | null;
-    };
-}
-
 export interface SocketMessage {
     type: 'chat_message';
     message: string;
-    sender_id: number;
-    room_id: string;
+    sender: string; // Email as documented
+    timestamp: string;
+    message_id: number;
+}
+
+export interface Conversation {
+    id: number;
+    other_user: {
+        id: number;
+        email: string;
+        profile_picture: string | null;
+        full_name: string;
+    };
+    last_message: {
+        text: string;
+        timestamp: string;
+        sender: string;
+    } | null;
     created_at: string;
-    id?: number;
 }

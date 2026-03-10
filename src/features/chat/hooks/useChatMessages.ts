@@ -3,7 +3,8 @@ import { useAppSelector } from '../../../redux/hooks';
 import { selectUser } from '../../../redux/featuresAPI/auth/auth.slice';
 import { format } from 'date-fns';
 import { useChatSocket } from './useChatSocket';
-import { useGetMessagesQuery } from '../api/chat.api';
+import { useGetMessagesQuery, chatApi } from '../api/chat.api';
+import { useAppDispatch } from '../../../redux/hooks';
 
 export interface FormattedMessage {
     id: number | string;
@@ -13,7 +14,12 @@ export interface FormattedMessage {
     isMine: boolean;
 }
 
-export const useChatMessages = (activeChatId: string | number | undefined, chatPartnerName?: string) => {
+export const useChatMessages = (
+    activeChatId: string | number | undefined,
+    recipientId: number | undefined,
+    chatPartnerName?: string
+) => {
+    const dispatch = useAppDispatch();
     const user = useAppSelector(selectUser);
     const token = useAppSelector((state: any) => state.auth.accessToken);
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -45,16 +51,23 @@ export const useChatMessages = (activeChatId: string | number | undefined, chatP
             const lastSocketMsg = socketMessages[socketMessages.length - 1];
             setAllMessages((prev) => {
                 // Check if message already exists by ID or content/timestamp
+                // lastSocketMsg.message_id is the ID from the socket
+                // m.id is the ID from the REST API
                 const exists = prev.some(m =>
-                    (m.id && lastSocketMsg.id && m.id === lastSocketMsg.id) ||
-                    ((m.text || m.message) === ((lastSocketMsg as any).message || (lastSocketMsg as any).text) && Math.abs(new Date(m.timestamp).getTime() - new Date(lastSocketMsg.timestamp || Date.now()).getTime()) < 5000)
+                    (m.id && lastSocketMsg.message_id && m.id === lastSocketMsg.message_id) ||
+                    ((m.text || m.message) === lastSocketMsg.message &&
+                        Math.abs(new Date(m.timestamp).getTime() - new Date(lastSocketMsg.timestamp).getTime()) < 5000)
                 );
 
                 if (!exists) {
+                    // Invalidate conversations to update sidebar
+                    dispatch(chatApi.util.invalidateTags(['Conversations' as any]));
+
                     return [...prev, {
                         ...lastSocketMsg,
-                        text: (lastSocketMsg as any).message || (lastSocketMsg as any).text,
-                        timestamp: (lastSocketMsg as any).timestamp || new Date().toISOString(),
+                        id: lastSocketMsg.message_id,
+                        text: lastSocketMsg.message,
+                        timestamp: lastSocketMsg.timestamp,
                     }];
                 }
                 return prev;
@@ -64,7 +77,11 @@ export const useChatMessages = (activeChatId: string | number | undefined, chatP
 
     const formattedMessages: FormattedMessage[] = useMemo(() => {
         return allMessages.map((msg: any) => {
-            const isMine = msg.sender === user?.id;
+            // Socket messages have 'sender' as email, REST messages have 'sender' as number (ID)
+            const isMine = typeof msg.sender === 'string'
+                ? msg.sender === user?.email
+                : msg.sender === user?.id;
+
             const senderName = isMine ? 'You' : (msg.sender_info?.full_name || msg.sender_info?.email || chatPartnerName || 'User');
 
             let formattedTime = '';
@@ -98,17 +115,17 @@ export const useChatMessages = (activeChatId: string | number | undefined, chatP
     }, [formattedMessages.length, scrollToBottom]);
 
     const handleSend = useCallback(async (content: string) => {
-        if (!content.trim() || !activeChatId) return;
+        if (!content.trim() || !activeChatId || !recipientId) return;
         setIsSending(true);
         try {
-            sendMessage(content.trim());
+            sendMessage(content.trim(), recipientId);
         } catch (err) {
             console.error('Failed to send message:', err);
             throw err;
         } finally {
             setIsSending(false);
         }
-    }, [activeChatId, sendMessage]);
+    }, [activeChatId, recipientId, sendMessage]);
 
     return {
         messages: formattedMessages,
