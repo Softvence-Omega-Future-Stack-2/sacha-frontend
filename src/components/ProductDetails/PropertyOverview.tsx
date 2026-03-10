@@ -8,7 +8,6 @@ import { useSelector } from 'react-redux';
 import { selectUser } from '../../redux/featuresAPI/auth/auth.slice';
 import { useGetSubscriptionStatusQuery } from '../../redux/featuresAPI/subscription/subscription.api';
 import { useCreatePossessionMutation } from '../../redux/featuresAPI/tenant/possessions.api';
-import ContactButton from '../Chat/ContactButton';
 import toast, { Toaster } from 'react-hot-toast';
 
 // Type for Detail Item
@@ -115,14 +114,7 @@ const PropertyOverview: React.FC<PropertyOverviewProps> = ({ ad }) => {
               {isCheckingSubscription ? 'Checking Status...' : isApplying ? 'Applying...' : 'APPLY'}
             </button>
 
-            {ad.owner && (
-              <ContactButton
-                userId={ad.owner}
-                userName="owner"
-                variant="secondary"
-                className="w-full mt-3"
-              />
-            )}
+            
           </div>
         </div>
       </div>
