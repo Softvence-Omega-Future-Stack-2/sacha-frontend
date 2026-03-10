@@ -508,10 +508,10 @@ const Navbar: React.FC = () => {
                       </button>
                     </>
                   ) : (
-                    <button className="flex items-center justify-center gap-2 w-full px-5 py-2.5 border border-[#061251] rounded-xl text-[#061251] hover:bg-gray-50 text-[15px] font-medium transition-colors">
+                    <Link to="/login" className="flex items-center justify-center gap-2 w-full px-5 py-2.5 border border-[#061251] rounded-xl text-[#061251] hover:bg-gray-50 text-[15px] font-medium transition-colors">
                       <User className="w-4 h-4" />
                       <span>{t("nav.login_register")}</span>
-                    </button>
+                    </Link>
                   )}
                 </div>
               </nav>
