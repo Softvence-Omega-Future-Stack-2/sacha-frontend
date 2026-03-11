@@ -28,6 +28,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                         </svg>
+
                     </div>
                 </div>
                 <div className="relative group">
@@ -66,7 +67,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                                 <div
                                     key={chat.id}
                                     onClick={() => onChatClick(chat.id)}
-                                    className={`group flex items-center px-4 py-4 cursor-pointer rounded-2xl transition-all duration-300 mx-2 animate-in slide-in-from-left-4 fade-in`}
+                                    className={`group flex items-center px-4 py-4 cursor-pointer rounded-2xl transition-all duration-300 mx-2 animate-in slide-in-from-left-4 fade-in ${isActive ? 'bg-blue-100' : ''}`}
                                     style={{ animationDelay: `${index * 50}ms` }}
                                 >
                                     <div className={`absolute left-0 w-1.5 h-10 bg-blue-600 rounded-r-full transition-all duration-300 transform scale-y-0 origin-center ${isActive ? 'scale-y-100' : 'group-hover:scale-y-50'}`} />
@@ -80,8 +81,9 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                                             )}
                                         </div>
                                         {chat.online && (
-                                            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white shadow-md animate-pulse" />
+                                            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2  border-black shadow-md animate-pulse" />
                                         )}
+
                                     </div>
 
                                     <div className={`ml-4 flex-1 min-w-0 transition-all ${isActive ? 'translate-x-1' : ''}`}>
@@ -105,8 +107,9 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                                         </div>
                                     </div>
 
-                                    <div className={`ml-2 transform transition-all duration-300 ${isActive ? 'translate-x-0 opacity-100 scale-100' : 'translate-x-4 opacity-0 scale-50 group-hover:translate-x-0 group-hover:opacity-100 group-hover:scale-100'}`}>
+                                    <div className={`ml-2 transform transition-all duration-300 ${isActive ? 'translate-x-0 opacity-100 scale-100 bg' : 'translate-x-4 opacity-0 scale-50 group-hover:translate-x-0 group-hover:opacity-100 group-hover:scale-100'}`}>
                                         <div className="w-2 h-2 rounded-full bg-blue-600 shadow-sm" />
+
                                     </div>
                                 </div>
                             );
