@@ -15,6 +15,8 @@ import {
   useAddTenantProofMutation,
   useGetTenantProofsQuery,
   useUpdateTenantProofMutation,
+  useUpdateMeTenantProofMutation,
+  useDeleteTenantProofMutation,
 } from '../../../../redux/featuresAPI/tenantProofApi/tenantProofApi';
 import type { ITenantProof } from '../../../../redux/featuresAPI/tenantProofApi/tenantProofApi';
 
@@ -43,8 +45,13 @@ const AllDocuments: React.FC = () => {
   const { data: proofsData, isLoading: isFetching, refetch } = useGetTenantProofsQuery();
   const [addTenantProof, { isLoading: isAdding }] = useAddTenantProofMutation();
   const [updateTenantProof, { isLoading: isUpdating }] = useUpdateTenantProofMutation();
+  const [updateMeTenantProof] = useUpdateMeTenantProofMutation();
+  const [deleteTenantProof, { isLoading: isDeleting }] = useDeleteTenantProofMutation();
 
   const proofRecord = proofsData && proofsData.length > 0 ? proofsData[0] : null;
+
+  // Track which category is currently being replaced
+  const [replacingId, setReplacingId] = useState<string | null>(null);
 
   // Main document categories
   const [documents, setDocuments] = useState<DocumentCategory[]>([
@@ -100,11 +107,45 @@ const AllDocuments: React.FC = () => {
   const hasAnyFile = documents.some((d) => d.uploadedFile) || additionalFiles.length > 0;
 
   // Upload file for main categories
-  const handleMainUpload = (categoryId: string, files: FileList | null) => {
+  const handleMainUpload = async (categoryId: string, files: FileList | null) => {
     if (!files || files.length === 0) return;
     const file = files[0];
 
-    // Store in newFiles state for later upload
+    // Validation for file types (best practice)
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error('Invalid file type', {
+        description: 'Only PDF, JPEG, and PNG files are allowed.',
+      });
+      return;
+    }
+
+    // IF we already have a record, perform an IMMEDIATE update on replace
+    if (proofRecord) {
+      const doc = documents.find(d => d.id === categoryId);
+      if (!doc) return;
+
+      setReplacingId(categoryId);
+      const formData = new FormData();
+      formData.append(doc.field, file);
+
+      try {
+        await updateMeTenantProof(formData).unwrap();
+        toast.success(`${doc.title} replaced successfully!`);
+        refetch();
+        return; // Exit early as it's already updated on server
+      } catch (error: any) {
+        console.error('Replace error:', error);
+        toast.error('Failed to replace document', {
+          description: error?.data?.message || 'Please try again.',
+        });
+        return;
+      } finally {
+        setReplacingId(null);
+      }
+    }
+
+    // Otherwise, store in newFiles state for later submission
     setNewFiles(prev => ({ ...prev, [categoryId]: file }));
 
     const previewFile: UploadedFile = {
@@ -121,16 +162,24 @@ const AllDocuments: React.FC = () => {
     );
   };
 
-  // Delete main category file (optimistic UI clear)
-  const deleteMainFile = (categoryId: string) => {
-    setDocuments((prev) =>
-      prev.map((doc) => (doc.id === categoryId ? { ...doc, uploadedFile: undefined } : doc))
-    );
-    setNewFiles(prev => {
-      const updated = { ...prev };
-      delete updated[categoryId];
-      return updated;
-    });
+
+  // Global Delete Action (best practice)
+  const handleDeleteAll = async () => {
+    if (!proofRecord) return;
+
+    if (!window.confirm('Are you sure you want to delete all documents? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      await deleteTenantProof(proofRecord.id).unwrap();
+      toast.success('All documents deleted successfully');
+      setNewFiles({});
+      refetch();
+    } catch (error: any) {
+      console.error('Delete error:', error);
+      toast.error(error?.data?.message || 'Failed to delete documents');
+    }
   };
 
   // Upload additional files (multiple)
@@ -163,6 +212,17 @@ const AllDocuments: React.FC = () => {
       return;
     }
 
+    // Validation for file types
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+    const invalidFiles = Object.values(newFiles).filter(file => !allowedTypes.includes(file.type));
+
+    if (invalidFiles.length > 0) {
+      toast.error('Invalid file type detected.', {
+        description: 'Only PDF, JPEG, and PNG files are allowed.',
+      });
+      return;
+    }
+
     const formData = new FormData();
     let hasNewFiles = false;
 
@@ -184,24 +244,46 @@ const AllDocuments: React.FC = () => {
     }
 
     setIsSubmitting(true);
-
     try {
       if (proofRecord) {
         // Update existing record
         await updateTenantProof({ id: proofRecord.id, data: formData }).unwrap();
-        toast.success('Documents updated successfully!');
+        toast.success('Documents submitted successfully!');
       } else {
         // Create new record
         await addTenantProof(formData).unwrap();
-        toast.success('Documents uploaded successfully!');
+        toast.success('Documents submitted successfully!');
       }
 
+      setNewFiles({}); // Clear selected files after success
       refetch();
     } catch (error: any) {
-      console.error('Upload error:', error);
-      toast.error(error?.data?.message || 'Failed to submit application', {
-        description: 'Please check your connection and try again.',
-      });
+      console.error('Submission error:', error);
+
+      // Detailed error parsing for best practices
+      if (error?.data) {
+        const fieldErrors = error.data;
+        let errorMessage = 'Failed to submit documents';
+
+        if (typeof fieldErrors === 'object' && !Array.isArray(fieldErrors)) {
+          const firstField = Object.keys(fieldErrors)[0];
+          const firstError = Array.isArray(fieldErrors[firstField])
+            ? fieldErrors[firstField][0]
+            : fieldErrors[firstField];
+
+          errorMessage = `${firstField.replace(/_/g, ' ')}: ${firstError}`;
+        } else if (fieldErrors.message) {
+          errorMessage = fieldErrors.message;
+        } else if (fieldErrors.detail) {
+          errorMessage = fieldErrors.detail;
+        }
+
+        toast.error(errorMessage, {
+          description: 'Please check your connection and try again.',
+        });
+      } else {
+        toast.error('An unexpected error occurred. Please try again.');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -283,23 +365,23 @@ const AllDocuments: React.FC = () => {
                 <div className="flex gap-3 items-center">
                   {doc.uploadedFile ? (
                     <>
-                      <label className="cursor-pointer">
+                      <label className={`cursor-pointer ${replacingId === doc.id ? 'opacity-50 pointer-events-none' : ''}`}>
                         <input
                           type="file"
                           className="hidden"
+                          disabled={replacingId === doc.id}
                           onChange={(e) => handleMainUpload(doc.id, e.target.files)}
                         />
                         <span className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
-                          <RefreshCw className="w-4 h-4" />
-                          Replace
+                          {replacingId === doc.id ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <RefreshCw className="w-4 h-4" />
+                          )}
+                          {replacingId === doc.id ? 'Replacing...' : 'Replace'}
                         </span>
                       </label>
-                      <button
-                        onClick={() => deleteMainFile(doc.id)}
-                        className="p-2.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      {/* Individual trash icon removed for cleaner UI as per requirements */}
                     </>
                   ) : (
                     <label className="cursor-pointer">
@@ -393,12 +475,26 @@ const AllDocuments: React.FC = () => {
           )}
         </div>
 
-        {/* Continue Button with Loader + Toast */}
-        <div className="mt-12 text-center">
+        <div className="flex flex-wrap items-center justify-end gap-4 mt-8">
+          {proofRecord && (
+            <button
+              onClick={handleDeleteAll}
+              disabled={isDeleting || isSubmitting}
+              className="px-10 py-4 text-red-600 border-2 border-red-600 text-lg font-semibold rounded-xl hover:bg-red-50 transition-all flex items-center gap-3 active:scale-95 disabled:opacity-50"
+            >
+              {isDeleting ? (
+                <Loader2 className="w-6 h-6 animate-spin" />
+              ) : (
+                <Trash2 className="w-5 h-5" />
+              )}
+              <span>Delete Documents</span>
+            </button>
+          )}
+
           <button
             onClick={handleContinue}
-            disabled={isSubmitting}
-            className={`px-10 py-4 text-white text-lg font-semibold rounded-xl shadow-lg transition-all flex items-end gap-3 mx-auto min-w-[260px] justify-end ${isSubmitting
+            disabled={isSubmitting || isDeleting}
+            className={`px-10 py-4 text-white text-lg font-semibold rounded-xl shadow-lg transition-all flex items-center gap-3 min-w-[260px] justify-center ${isSubmitting || isDeleting
               ? 'bg-blue-400 cursor-not-allowed'
               : 'bg-blue-600 hover:bg-blue-700 active:scale-95'
               }`}
@@ -406,24 +502,24 @@ const AllDocuments: React.FC = () => {
             {isSubmitting || isAdding || isUpdating ? (
               <>
                 <Loader2 className="w-6 h-6 animate-spin" />
-                <span>{proofRecord ? 'Updating...' : 'Uploading...'}</span>
+                <span>Submitting...</span>
               </>
             ) : (
               <>
-                <Upload className="w-5 h-5" />
-                <span>{proofRecord ? 'Update  Documents' : 'Upload Documents'}</span>
+                <FileText className="w-5 h-5" />
+                <span>Submit Documents</span>
               </>
             )}
           </button>
-
-          <p className="mt-4 text-sm text-gray-500">
-            {isSubmitting
-              ? 'Please wait while we process your application...'
-              : hasAnyFile
-                ? 'You can always come back later to update documents.'
-                : 'Upload at least one document to continue.'}
-          </p>
         </div>
+
+        <p className="mt-4 text-sm text-gray-500">
+          {isSubmitting
+            ? 'Please wait while we process your application...'
+            : hasAnyFile
+              ? 'You can always come back later to update documents.'
+              : 'Upload at least one document to continue.'}
+        </p>
       </div>
     </div>
   );
