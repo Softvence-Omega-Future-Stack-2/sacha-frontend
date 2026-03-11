@@ -36,7 +36,7 @@ const Card: React.FC<PropertyCardProps> = ({
   };
 
   const handleViewDetails = () => {
-    navigate(`/product-details`);
+    navigate(`/apartments/product-details/${id}`);
   };
 
   return (
@@ -76,9 +76,8 @@ const Card: React.FC<PropertyCardProps> = ({
                        cursor-pointer transition-transform duration-200"
           >
             <Heart
-              className={`w-5 h-5 ${
-                isFavorite ? "fill-red-500 text-[#ffffff]" : "text-[#ffffff]"
-              }`}
+              className={`w-5 h-5 ${isFavorite ? "fill-red-500 text-[#ffffff]" : "text-[#ffffff]"
+                }`}
             />
           </button>
         </div>
