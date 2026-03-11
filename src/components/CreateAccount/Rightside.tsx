@@ -126,13 +126,9 @@ const InputField = ({
             name={name}
             type="tel"
             placeholder={placeholder}
-            value={value.replace(selectedCountry.code, "")}
+            value={value.startsWith(selectedCountry.code) ? value.slice(selectedCountry.code.length) : value}
             onChange={(e) => {
-              // Ensure we only process numeric input for the phone part
-              const inputVal = e.target.value;
-              // Allow simple numeric check or just pass through.
-              // Usually better to let user type and validate later or strip non-numeric.
-              // Here we simply update as before.
+              const inputVal = e.target.value.replace(/\D/g, ""); // Keep only digits
               onChange({
                 target: {
                   name,
@@ -151,9 +147,12 @@ const InputField = ({
               <li
                 key={c.code}
                 onClick={() => {
+                  const currentNumber = value.startsWith(selectedCountry.code)
+                    ? value.slice(selectedCountry.code.length)
+                    : value.replace(/\D/g, "");
                   setSelectedCountry(c);
                   onChange({
-                    target: { name, value: c.code },
+                    target: { name, value: c.code + currentNumber },
                   } as any);
                   setOpen(false);
                 }}
@@ -384,10 +383,19 @@ const Rightside = () => {
       showToast("Compte créé avec succès!", "success");
       setTimeout(() => navigate("/otp", { state: { email: formData.email.trim() } }), 1500);
     } catch (error: any) {
+      if (error?.data) {
+        setErrors((prev) => ({
+          ...prev,
+          firstName: error.data.first_name?.[0] || prev.firstName,
+          lastName: error.data.last_name?.[0] || prev.lastName,
+          email: error.data.email?.[0] || prev.email,
+          phone: error.data.phone?.[0] || error.data.phone_number?.[0] || prev.phone,
+          password: error.data.password?.[0] || prev.password,
+        }));
+      }
+
       const errMsg =
         error?.data?.detail ||
-        error?.data?.email?.[0] ||
-        error?.data?.phone?.[0] ||
         error?.data?.non_field_errors?.[0] ||
         "Registration failed. Please try again.";
       showToast(errMsg, "error");
@@ -456,7 +464,7 @@ const Rightside = () => {
           </div>
 
           <InputField
-            label="Email or Phone"
+            label="Email "
             name="email"
             placeholder="Enter your email"
             value={formData.email}

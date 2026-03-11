@@ -20,15 +20,13 @@ export const tenantProofApi = baseAPI.injectEndpoints({
                 method: "GET",
             }),
             transformResponse: (response: any) => {
-                // The API might return { success: true, message: "...", tenant_proof: [...] }
-                // or sometimes just the object if it's a GET for a single one (though list usually returns array)
+             
                 const proofs = response?.tenant_proof || response?.results || (Array.isArray(response) ? response : []);
 
                 if (Array.isArray(proofs)) {
                     return proofs;
                 }
 
-                // If it's a single object returned in an unexpected way
                 if (response?.id || response?.identity_doc) {
                     return [response];
                 }
@@ -50,6 +48,15 @@ export const tenantProofApi = baseAPI.injectEndpoints({
         updateTenantProof: build.mutation<{ success: boolean; message: string; tenant_proof: ITenantProof }, { id: number; data: FormData }>({
             query: ({ id, data }) => ({
                 url: `/tenant/proof/${id}/`,
+                method: "PATCH",
+                body: data,
+            }),
+            invalidatesTags: ["TenantProof" as any],
+        }),
+
+        updateMeTenantProof: build.mutation<{ success: boolean; message: string; tenant_proof: ITenantProof }, FormData>({
+            query: (data) => ({
+                url: "/tenant/proof/update-me/",
                 method: "PATCH",
                 body: data,
             }),
@@ -82,5 +89,6 @@ export const {
     useGetTenantProofsQuery,
     useAddTenantProofMutation,
     useUpdateTenantProofMutation,
+    useUpdateMeTenantProofMutation,
     useDeleteTenantProofMutation,
 } = tenantProofApi;
