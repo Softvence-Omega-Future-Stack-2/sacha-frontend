@@ -43,6 +43,7 @@ import AllDocuments from "../features/owner/components/AllDocuments/Alldocuments
 import OwnerDashboardLayout from "../features/owner/pages/OwnerDashboardLayout";
 import TenantDashboard from "../features/admin/pages/TenantDashboard";
 import TenantProfile from "../features/admin/components/MyProfile/Myprofile";
+import ApplicationsList from "../features/admin/components/Applications/PremiumMember";
 
 const router = createBrowserRouter([
   {
@@ -190,10 +191,10 @@ const router = createBrowserRouter([
         path: "possessions",
         element: <PossessionsManager />,
       },
-      // {
-      //   path: "applications",
-      //   element: <ApplicationsList />,
-      // },
+      {
+        path: "applications",
+        element: <ApplicationsList />,
+      },
       {
         path: "search",
         element: <SearchHistory />,
