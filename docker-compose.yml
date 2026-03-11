@@ -1,0 +1,11 @@
+services:
+  frontend:
+    image: siraj130/sacha-frontend3:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:80"
+    volumes:
+      - ./.env:/app/.env
+    restart: always
